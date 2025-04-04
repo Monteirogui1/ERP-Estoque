@@ -1,0 +1,106 @@
+{% extends 'layouts/base.html' %}
+
+{% block title %}Produtos - ERP{% endblock %}
+
+{% block conteudo %}
+<div class="content">
+    <div class="page-header">
+        <h1>Produtos</h1>
+        <a href="{% url 'produtos:produtos_form' %}" class="btn btn-primary">Novo Produto</a>
+    </div>
+
+    <!-- Formulário de filtros -->
+    <form method="get" class="filter-form">
+        <div class="form-group">
+            <label for="nome">Nome</label>
+            <input type="text" name="nome" id="nome" value="{{ request.GET.nome }}" class="form-control" placeholder="Digite o nome">
+        </div>
+        <div class="form-group">
+            <label for="num_serie">Número de Série</label>
+            <input type="text" name="num_serie" id="num_serie" value="{{ request.GET.num_serie }}" class="form-control" placeholder="Digite o número de série">
+        </div>
+        <div class="form-group">
+            <label for="status">Status</label>
+            <select name="status" id="status" class="form-control">
+                <option value="">Todos</option>
+                <option value="true" {% if request.GET.status == "true" %}selected{% endif %}>Ativo</option>
+                <option value="false" {% if request.GET.status == "false" %}selected{% endif %}>Inativo</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="fornecedor">Fornecedor</label>
+            <select name="fornecedor" id="fornecedor" class="form-control">
+                <option value="">Todas</option>
+                {% for forn in fornecedores %}
+                    <option value="{{ forn.id }}" {% if forn.id|stringformat:"s" == request.GET.fornecedor %}selected{% endif %}>{{ forn.nome }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="marca">Marca</label>
+            <select name="marca" id="marca" class="form-control">
+                <option value="">Todas</option>
+                {% for m in marcas %}
+                    <option value="{{ m.id }}" {% if m.id|stringformat:"s" == request.GET.marca %}selected{% endif %}>{{ m.nome }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="ordenar">Ordenar por</label>
+            <select name="ordenar" id="ordenar" class="form-control">
+                <option value="">Padrão</option>
+                <option value="nome" {% if request.GET.ordenar == "nome" %}selected{% endif %}>Nome (A-Z)</option>
+                <option value="-nome" {% if request.GET.ordenar == "-nome" %}selected{% endif %}>Nome (Z-A)</option>
+                <option value="preco_custo" {% if request.GET.ordenar == "preco_custo" %}selected{% endif %}>Preço Custo (Menor-Maior)</option>
+                <option value="-preco_custo" {% if request.GET.ordenar == "-preco_custo" %}selected{% endif %}>Preço Custo (Maior-Menor)</option>
+                <option value="preco_venda" {% if request.GET.ordenar == "preco_venda" %}selected{% endif %}>Preço Venda (Menor-Maior)</option>
+                <option value="-preco_venda" {% if request.GET.ordenar == "-preco_venda" %}selected{% endif %}>Preço Venda (Maior-Menor)</option>
+                <option value="quantidade" {% if request.GET.ordenar == "quantidade" %}selected{% endif %}>Estoque (Menor-Maior)</option>
+                <option value="-quantidade" {% if request.GET.ordenar == "-quantidade" %}selected{% endif %}>Estoque (Maior-Menor)</option>
+            </select>
+        </div>
+        <div class="filter-buttons">
+            <button type="submit" class="btn btn-primary">Filtrar</button>
+            <a href="{% url 'produtos:produtos_list' %}" class="btn btn-secondary">Limpar</a>
+        </div>
+    </form>
+
+    <!-- Tabela de produtos -->
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Nome</th>
+                <th>Marca</th>
+                <th>Fornecedor</th>
+                <th>Preço Custo</th>
+                <th>Preço Venda</th>
+                <th>Estoque</th>
+                <th>Status</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for produtos in produto %}
+                <tr>
+                    <td>{{ produtos.nome }}</td>
+                    <td>{{ produtos.marca }}</td>
+                    <td>{{ produtos.fornecedor }}</td>
+                    <td>R$ {{ produtos.preco_custo|floatformat:2 }}</td>
+                    <td>R$ {{ produtos.preco_venda|floatformat:2 }}</td>
+                    <td>{{ produtos.quantidade|default:"0" }}</td>
+                    <td>{{ produtos.status|yesno:"Ativo,Inativo" }}</td>
+                    <td>
+                        <a href="{% url 'produtos:produtos_detail' produtos.id %}" class="btn btn-sm btn-edit">View</a>
+                        <a href="{% url 'produtos:produtos_form' produtos.id %}" class="btn btn-sm btn-edit">Editar</a>
+                        <button class="btn btn-sm btn-delete" data-id="{{ produtos.id }}">Excluir</button>
+                    </td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="7" class="text-center">Nenhum produto cadastrado ou encontrado.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

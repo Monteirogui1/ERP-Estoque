@@ -1,0 +1,126 @@
+{% extends 'layouts/base.html' %}
+
+{% block title %}Dashboard - ERP{% endblock %}
+
+{% block conteudo %}
+<div class="content">
+    <div class="page-header">
+        <h1>Dashboard</h1>
+    </div>
+
+    <!-- Métricas -->
+    <div class="metrics">
+        <div class="metric-card">
+            <h3>Total de Produtos em Estoque</h3>
+            <p>{{ produtos_metricas.total_quantidade }}</p>
+        </div>
+        <div class="metric-card">
+            <h3>Total de Preço de Custo</h3>
+            <p>R$ {{ produtos_metricas.total_preco_custo }}</p>
+        </div>
+        <div class="metric-card">
+            <h3>Total de Preço de Venda</h3>
+            <p>R$ {{ produtos_metricas.total_preco_venda }}</p>
+        </div>
+        <div class="metric-card">
+            <h3>Total de Lucro Estimado</h3>
+            <p>R$ {{ produtos_metricas.total_lucro }}</p>
+        </div>
+    </div>
+
+    <!-- Métricas de Vendas -->
+    <div class="metrics">
+        <div class="metric-card">
+            <h3>Total de Vendas</h3>
+            <p>{{ vendas_metricas.total_vendas }}</p>
+        </div>
+        <div class="metric-card">
+            <h3>Total de Produtos Vendidos</h3>
+            <p>{{ vendas_metricas.total_produtos_vendidos }}</p>
+        </div>
+        <div class="metric-card">
+            <h3>Total de Valor de Vendas</h3>
+            <p>R$ {{ vendas_metricas.total_valor_vendas }}</p>
+        </div>
+        <div class="metric-card">
+            <h3>Total de Lucro de Vendas</h3>
+            <p>R$ {{ vendas_metricas.total_valor_lucro }}</p>
+        </div>
+    </div>
+
+    <!-- Top 10 Produtos Mais Vendidos -->
+    <div class="top-10-section">
+        <h2>Top 10 Produtos Mais Vendidos</h2>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Posição</th>
+                    <th>Nome</th>
+                    <th>Categoria</th>
+                    <th>Marca</th>
+                    <th>Fornecedor</th>
+                    <th>Preço de Venda</th>
+                    <th>Total Vendido</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for produto in saidas.total_vendas %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ produto.nome }}</td>
+                    <td>{{ produto.categoria.nome }}</td>
+                    <td>{{ produto.marca.nome }}</td>
+                    <td>{{ produto.fornecedor.nome }}</td>
+                    <td>R$ {{ produto.preco_venda }}</td>
+                    <td>{{ produto.total_vendido|default:"0" }}</td>
+                    <td>{{ produto.status|yesno:"Ativo,Inativo" }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="8">Nenhum dado disponível.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Top 10 Produtos Menos Vendidos -->
+    <div class="top-10-section">
+        <h2>Top 10 Produtos Menos Vendidos</h2>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Posição</th>
+                    <th>Nome</th>
+                    <th>Categoria</th>
+                    <th>Marca</th>
+                    <th>Fornecedor</th>
+                    <th>Preço de Venda</th>
+                    <th>Total Vendido</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for produto in saidas.sem_saidas %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ produto.nome }}</td>
+                    <td>{{ produto.categoria.nome }}</td>
+                    <td>{{ produto.marca.nome }}</td>
+                    <td>{{ produto.fornecedor.nome }}</td>
+                    <td>R$ {{ produto.preco_venda }}</td>
+                    <td>{{ produto.total_vendido|default:"0" }}</td>
+                    <td>{{ produto.status|yesno:"Ativo,Inativo" }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="8">Nenhum dado disponível.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</div>
+{% endblock %}
