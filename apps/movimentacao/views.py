@@ -2,7 +2,10 @@ from datetime import datetime
 
 from django.shortcuts import render
 from django.urls import reverse_lazy
-from django.views.generic import ListView, CreateView, DetailView, DeleteView
+from django.views.generic import ListView, CreateView, DetailView, DeleteView, View
+from django.http import JsonResponse
+from django.views.decorators.http import require_GET
+from django.utils.decorators import method_decorator
 
 from .models import Movimentacao
 from .forms import MovimentacaoForm
@@ -63,3 +66,21 @@ class MovimentacaoDeleteView(DeleteView):
     model = Movimentacao
     template_name = 'movimentacao/movimentacao_delete.html'
     success_url = reverse_lazy('movimentacao:movimentacao_list')
+
+
+class BuscarProdutoPorCodigoView(View):
+    @method_decorator(require_GET)
+    def get(self, request, *args, **kwargs):
+        codigo = request.GET.get('codigo_barras', '')
+        if not codigo:
+            return JsonResponse({'error': 'Código de barras não fornecido'}, status=400)
+
+        try:
+            produto = Produto.objects.get(codigo_barras=codigo, status=True)
+            return JsonResponse({
+                'id': produto.id,
+                'nome': produto.nome,
+                'quantidade': produto.quantidade,
+            })
+        except Produto.DoesNotExist:
+            return JsonResponse({'error': 'Produto não encontrado'}, status=404)

@@ -34,6 +34,10 @@
                     <span class="detail-value">{{ produto.nome }}</span>
                 </div>
                 <div class="detail-row">
+                    <span class="detail-label">Código de Barras:</span>
+                    <span class="detail-value">{{ produto.codigo_barras|default:"Não informado" }}</span>
+                </div>
+                <div class="detail-row">
                     <span class="detail-label">Status:</span>
                     <span class="detail-value">{% if produto.status %}Ativo{% else %}Inativo{% endif %}</span>
                 </div>
@@ -72,6 +76,21 @@
                 <div class="detail-row">
                     <span class="detail-label">Limite do Estoque:</span>
                     <span class="detail-value">{{ produto.estoque_minimo|default:"0" }}</span>
+                </div>
+                <div class="detail-row"><strong>Código de Barras:</strong> 
+                    {% if object.barcode_image %}
+                        <a href="{{ object.barcode_image.url }}" download="barcode_{{ object.codigo_barras|default:'produto' }}.png" class=" btn btn-sm btn-primary">Baixar</a>
+                    {% else %}
+                    <span class="detail-value">Não gerado</span>
+                        
+                    {% endif %}
+                </div>
+                <div class="detail-row"><strong>QR Code:</strong> 
+                    {% if object.qr_code %}
+                        <a href="{{ object.qr_code.url }}" download="qrcode_{{ object.codigo_barras|default:'produto' }}.png" class="btn btn-sm btn-primary">Baixar</a>
+                    {% else %}
+                    <span class="detail-value">Não gerado</span>
+                    {% endif %}
                 </div>
             </div>
         </div>

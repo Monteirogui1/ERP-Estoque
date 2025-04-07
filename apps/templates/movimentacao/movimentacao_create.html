@@ -10,6 +10,10 @@
     </div>
     <form method="post">
         {% csrf_token %}
+        <div class="form-group">
+            <label for="codigo_barras">Código de Barras</label>
+            <input type="text" id="codigo_barras" class="form-control" placeholder="Escaneie o código" autofocus>
+        </div>
         <div class="form-grid">
             <div class="form-group">
                 {{ form.produto.label_tag }}

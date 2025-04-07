@@ -18,6 +18,7 @@ class ProdutoListView(ListView):
     def get_queryset(self):
         queryset = super().get_queryset()
         nome = self.request.GET.get('nome')
+        codigo_barras = self.request.GET.get('codigo_barras')
         status = self.request.GET.get('status')
         num_serie = self.request.GET.get('num_serie')
         categoria = self.request.GET.get('categoria')
@@ -27,6 +28,8 @@ class ProdutoListView(ListView):
 
         if nome:
             queryset = queryset.filter(nome__icontains=nome)
+        if codigo_barras:
+            queryset = queryset.filter(codigo_barras__icontains=codigo_barras)
         if num_serie:
             queryset = queryset.filter(num_serie__icontains=num_serie)
         if fornecedor:

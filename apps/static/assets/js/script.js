@@ -78,3 +78,28 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 });
+
+
+document.addEventListener('DOMContentLoaded', function () {
+    const codigoBarrasInput = document.getElementById('codigo_barras');
+    if (codigoBarrasInput) {
+        codigoBarrasInput.addEventListener('change', function () {
+            const codigo = this.value;
+            if (codigo) {
+                fetch(`/Movimentacao/buscar-produto/?codigo_barras=${codigo}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.error) {
+                            alert(data.error);
+                        } else {
+                            document.getElementById('id_produto').value = data.id;
+                        }
+                        this.value = ''; // Limpa o campo após a leitura
+                    })
+                    .catch(error => {
+                        console.error('Erro:', error);
+                    });
+            }
+        });
+    }
+});
