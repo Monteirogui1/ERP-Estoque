@@ -3,7 +3,7 @@ from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView, DetailView, UpdateView, DeleteView
 
 from .models import Produto
-from .forms import ProdutoForm
+from .forms import ProdutoForm, VariacaoProdutoFormSet
 from ..categorias.models import Categoria
 from ..fornecedor.models import Fornecedor
 from ..marcas.models import Marca
@@ -62,6 +62,26 @@ class ProdutoCreateView(CreateView):
     form_class = ProdutoForm
     success_url = reverse_lazy('produtos:produtos_list')
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        if self.request.POST:
+            context['formset'] = VariacaoProdutoFormSet(self.request.POST, self.request.FILES)
+        else:
+            context['formset'] = VariacaoProdutoFormSet()
+        return context
+
+    def form_valid(self, form):
+        self.object = form.save()
+        formset = VariacaoProdutoFormSet(self.request.POST, self.request.FILES, instance=self.object)
+        if formset.is_valid():
+            formset.save()
+            return super().form_valid(form)
+        else:
+            return self.form_invalid(form)
+
+    def form_invalid(self, form):
+        return self.render_to_response(self.get_context_data(form=form))
+
 
 class ProdutoDetailView(DetailView):
     model = Produto
@@ -69,8 +89,8 @@ class ProdutoDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-
-        context['movimentacao'] = Movimentacao.objects.filter(produto=self.object).order_by('-created_at')
+        context['variacaoproduto'] = self.object.variacoes.all()
+        context['movimentacao'] = Movimentacao.objects.filter(produto__produto=self.object).order_by('-created_at')
         return context
 
 
@@ -79,6 +99,26 @@ class ProdutoUpdateView(UpdateView):
     template_name = 'produtos/produtos_edit.html'
     form_class = ProdutoForm
     success_url = reverse_lazy('produtos:produtos_list')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        if self.request.POST:
+            context['formset'] = VariacaoProdutoFormSet(self.request.POST, self.request.FILES, instance=self.object)
+        else:
+            context['formset'] = VariacaoProdutoFormSet(instance=self.object)
+        return context
+
+    def form_valid(self, form):
+        self.object = form.save()
+        formset = VariacaoProdutoFormSet(self.request.POST, self.request.FILES, instance=self.object)
+        if formset.is_valid():
+            formset.save()
+            return super().form_valid(form)
+        else:
+            return self.form_invalid(form)
+
+    def form_invalid(self, form):
+        return self.render_to_response(self.get_context_data(form=form))
 
 
 class ProdutoDeleteView(DeleteView):

@@ -43,28 +43,24 @@
         <thead>
             <tr>
                 <th>Produto</th>
+                <th>Tamanho</th>
                 <th>Tipo</th>
                 <th>Quantidade</th>
-                <th>Descrição</th>
                 <th>Data</th>
-                <th>Ações</th>
             </tr>
         </thead>
         <tbody>
-            {% for movimentacoes in movimentacao %}
+            {% for mov in movimentacao %}
                 <tr>
-                    <td>{{ movimentacoes.produto.nome }}</td>
-                    <td>{{ movimentacoes.tipo }}</td>
-                    <td>{{ movimentacoes.quantidade }}</td>
-                    <td>{{ movimentacoes.descricao|default:"-" }}</td>
-                    <td>{{ movimentacoes.created_at|date:"d/m/Y H:i" }}</td>
-                    <td>
-                        <button class="btn btn-sm btn-delete">Visualizar</button>
-                    </td>
+                    <td>{{ mov.produto.produto.nome }}</td>
+                    <td>{{ mov.produto.tamanho }}</td>
+                    <td>{{ mov.tipo }}</td>
+                    <td>{{ mov.quantidade }}</td>
+                    <td>{{ mov.created_at|date:"d/m/Y H:i" }}</td>
                 </tr>
             {% empty %}
                 <tr>
-                    <td colspan="6" class="text-center">Nenhuma movimentação cadastrada.</td>
+                    <td colspan="5">Nenhuma movimentação encontrada.</td>
                 </tr>
             {% endfor %}
         </tbody>

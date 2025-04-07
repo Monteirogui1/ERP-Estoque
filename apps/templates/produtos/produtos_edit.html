@@ -10,6 +10,7 @@
     </div>
     <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
+        <!-- Campos do Produto -->
         <div class="form-grid">
             <div class="form-group">
                 {{ form.status.label_tag }}
@@ -23,13 +24,6 @@
                 {{ form.nome }}
                 {% if form.nome.errors %}
                     <div class="text-danger">{{ form.nome.errors }}</div>
-                {% endif %}
-            </div>
-            <div class="form-group">
-                {{ form.codigo_barras.label_tag }}
-                {{ form.codigo_barras }}
-                {% if form.codigo_barras.errors %}
-                    <div class="text-danger">{{ form.codigo_barras.errors }}</div>
                 {% endif %}
             </div>
             <div class="form-group">
@@ -74,13 +68,6 @@
                     <div class="text-danger">{{ form.preco_venda.errors }}</div>
                 {% endif %}
             </div>
-            <div class="form-group">
-                {{ form.estoque_minimo.label_tag }}
-                {{ form.estoque_minimo }}
-                {% if form.estoque_minimo.errors %}
-                    <div class="text-danger">{{ form.estoque_minimo.errors }}</div>
-                {% endif %}
-            </div>
             <div class="form-group full-width">
                 {{ form.descricao.label_tag }}
                 {{ form.descricao }}
@@ -92,10 +79,48 @@
                 {{ form.imagem.label_tag }}
                 {{ form.imagem }}
                 {% if form.imagem.errors %}
-                    <div class="error-message">{{ form.imagem.errors }}</div>
+                    <div class="text-danger">{{ form.imagem.errors }}</div>
                 {% endif %}
             </div>
         </div>
+
+        <!-- Variações de Tamanho -->
+        <h3>Variações de Tamanho</h3>
+        {{ formset.management_form }}
+        <div id="variacoes-container">
+            {% for variacao_form in formset %}
+                <div class="variacao-form form-grid">
+                    <div class="form-group">
+                        {{ variacao_form.tamanho.label_tag }}
+                        {{ variacao_form.tamanho }}
+                        {% if variacao_form.tamanho.errors %}
+                            <div class="text-danger">{{ variacao_form.tamanho.errors }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="form-group">
+                        {{ variacao_form.estoque_minimo.label_tag }}
+                        {{ variacao_form.estoque_minimo }}
+                        {% if variacao_form.estoque_minimo.errors %}
+                            <div class="text-danger">{{ variacao_form.estoque_minimo.errors }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="form-group">
+                        {{ variacao_form.codigo_barras.label_tag }}
+                        {{ variacao_form.codigo_barras }}
+                        {% if variacao_form.codigo_barras.errors %}
+                            <div class="text-danger">{{ variacao_form.codigo_barras.errors }}</div>
+                        {% endif %}
+                    </div>
+                    <!-- Campo oculto para DELETE -->
+                    <div class="form-group">
+                        <button type="button" class="btn btn-danger btn-sm remove-variacao">Remover</button>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        <button type="button" id="add-variacao" class="btn btn-secondary">Adicionar Variação</button>
+
+        <!-- Ações do Formulário -->
         <div class="form-actions">
             <button type="submit" class="btn btn-primary">Salvar</button>
         </div>

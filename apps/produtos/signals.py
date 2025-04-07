@@ -1,6 +1,6 @@
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from .models import Produto
+from .models import Produto, VariacaoProduto
 import barcode
 from barcode.writer import ImageWriter
 import qrcode
@@ -8,7 +8,7 @@ from django.core.files import File
 from io import BytesIO
 from django.db.models import F
 
-@receiver(post_save, sender=Produto)
+@receiver(post_save, sender=VariacaoProduto)
 def gerar_codigos_produto(sender, instance, created, **kwargs):
     """
     Gera a imagem do código de barras e o QR code após salvar o produto,
@@ -56,7 +56,7 @@ def gerar_codigos_produto(sender, instance, created, **kwargs):
 
         # Se alguma imagem foi gerada, atualiza o objeto no banco sem disparar o signal novamente
         if instance.barcode_image.name or instance.qr_code.name:
-            Produto.objects.filter(pk=instance.pk).update(
+            VariacaoProduto.objects.filter(pk=instance.pk).update(
                 barcode_image=F('barcode_image') if instance.barcode_image.name else None,
                 qr_code=F('qr_code') if instance.qr_code.name else None
             )

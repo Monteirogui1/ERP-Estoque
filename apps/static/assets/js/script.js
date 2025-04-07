@@ -103,3 +103,41 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 });
+
+document.addEventListener('DOMContentLoaded', function () {
+    const container = document.getElementById('variacoes-container');
+    const addButton = document.getElementById('add-variacao');
+    const totalForms = document.querySelector('#id_variacoes-TOTAL_FORMS');
+
+    addButton.addEventListener('click', function () {
+        const formCount = parseInt(totalForms.value);
+        const newForm = container.children[0].cloneNode(true);
+
+        // Resetando valores dos inputs
+        newForm.querySelectorAll('input, select').forEach(input => {
+            if (input.name) {
+                input.name = input.name.replace(/form-\d+-/, `form-${formCount}-`);
+                input.id = input.id.replace(/form-\d+-/, `form-${formCount}-`);
+                if (input.type !== 'hidden') input.value = '';
+            }
+        });
+
+        // Garantindo que o formset total seja atualizado
+        container.appendChild(newForm);
+        totalForms.value = formCount + 1;
+    });
+
+    container.addEventListener('click', function (e) {
+        if (e.target.classList.contains('remove-variacao')) {
+            const form = e.target.closest('.variacao-form');
+            const deleteInput = form.querySelector('input[type="checkbox"][name$="-DELETE"]');
+            if (deleteInput) {
+                deleteInput.checked = true;
+                form.style.display = 'none';
+            } else if (container.children.length > 1) {
+                form.remove();
+                totalForms.value = parseInt(totalForms.value) - 1;
+            }
+        }
+    });
+});

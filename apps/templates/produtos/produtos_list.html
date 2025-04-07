@@ -59,8 +59,6 @@
                 <option value="-preco_custo" {% if request.GET.ordenar == "-preco_custo" %}selected{% endif %}>Preço Custo (Maior-Menor)</option>
                 <option value="preco_venda" {% if request.GET.ordenar == "preco_venda" %}selected{% endif %}>Preço Venda (Menor-Maior)</option>
                 <option value="-preco_venda" {% if request.GET.ordenar == "-preco_venda" %}selected{% endif %}>Preço Venda (Maior-Menor)</option>
-                <option value="quantidade" {% if request.GET.ordenar == "quantidade" %}selected{% endif %}>Estoque (Menor-Maior)</option>
-                <option value="-quantidade" {% if request.GET.ordenar == "-quantidade" %}selected{% endif %}>Estoque (Maior-Menor)</option>
             </select>
         </div>
         <div class="filter-buttons">
@@ -78,7 +76,6 @@
                 <th>Fornecedor</th>
                 <th>Preço Custo</th>
                 <th>Preço Venda</th>
-                <th>Estoque</th>
                 <th>Status</th>
                 <th>Ações</th>
             </tr>
@@ -91,7 +88,6 @@
                     <td>{{ produtos.fornecedor }}</td>
                     <td>R$ {{ produtos.preco_custo|floatformat:2 }}</td>
                     <td>R$ {{ produtos.preco_venda|floatformat:2 }}</td>
-                    <td>{{ produtos.quantidade|default:"0" }}</td>
                     <td>{{ produtos.status|yesno:"Ativo,Inativo" }}</td>
                     <td>
                         <a href="{% url 'produtos:produtos_detail' produtos.id %}" class="btn btn-sm btn-edit">View</a>
