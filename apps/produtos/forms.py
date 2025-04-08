@@ -1,4 +1,5 @@
 from django import forms
+from django import template
 from django.core.exceptions import ValidationError
 
 from .models import Produto, VariacaoProduto
@@ -57,8 +58,6 @@ class VariacaoProdutoForm(forms.ModelForm):
         codigo = self.cleaned_data.get('codigo_barras')
         if codigo and not codigo.strip():
             raise forms.ValidationError("O código de barras não pode conter apenas espaços.")
-        if VariacaoProduto.objects.filter(codigo_barras=codigo).exists():
-            raise ValidationError("Este código de barras já está em uso.")
         return codigo
 
 VariacaoProdutoFormSet = forms.inlineformset_factory(

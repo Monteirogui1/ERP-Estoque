@@ -89,7 +89,9 @@
         {{ formset.management_form }}
         <div id="variacoes-container">
             {% for variacao_form in formset %}
-                <div class="variacao-form form-grid">
+            <div class="variacao-form form-grid" data-form-id="{{ forloop.counter0 }}">
+                    <!-- Campo oculto id (essencial para instâncias existentes) -->
+                    {{ variacao_form.id }}
                     <div class="form-group">
                         {{ variacao_form.tamanho.label_tag }}
                         {{ variacao_form.tamanho }}

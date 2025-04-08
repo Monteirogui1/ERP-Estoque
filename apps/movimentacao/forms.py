@@ -26,3 +26,4 @@ class MovimentacaoForm(forms.ModelForm):
             'quantidade': 'Quantidade',
             'descricao': 'Descrição',
         }
+        

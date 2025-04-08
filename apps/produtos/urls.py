@@ -12,7 +12,7 @@ urlpatterns = [
     path('Produto/criar/', ProdutoCreateView.as_view(), name='produtos_form'),
     path('Produto/<int:pk>/detalhe/', ProdutoDetailView.as_view(), name='produtos_detail'),
     path('Produto/<int:pk>/atualizar/', ProdutoUpdateView.as_view(), name='produtos_form'),
-    path('Produto/<int:pk>/deletar/', ProdutoDeleteView.as_view(), name='produto_delete'),
+    path('Produto/<int:pk>/deletar/', ProdutoDeleteView.as_view(), name='produtos_delete'),
 ]
 
 if settings.DEBUG:

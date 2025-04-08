@@ -1,3 +1,4 @@
+from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView, DetailView, UpdateView, DeleteView
@@ -75,7 +76,7 @@ class ProdutoCreateView(CreateView):
         formset = VariacaoProdutoFormSet(self.request.POST, self.request.FILES, instance=self.object)
         if formset.is_valid():
             formset.save()
-            return reverse_lazy('produtos:produtos_list')
+            return HttpResponseRedirect(self.get_success_url())
         else:
             return self.form_invalid(form)
 
@@ -106,17 +107,24 @@ class ProdutoUpdateView(UpdateView):
         return context
 
     def form_valid(self, form):
-        self.object = form.save()
         formset = VariacaoProdutoFormSet(self.request.POST, self.request.FILES, instance=self.object)
-        if formset.is_valid():
+
+        if form.is_valid() and formset.is_valid():
+            self.object = form.save()
+            formset.instance = self.object
             formset.save()
-            return reverse_lazy('produtos:produtos_list')
+            return HttpResponseRedirect(self.get_success_url())
         else:
             return self.form_invalid(form)
+
+    def form_invalid(self, form):
+        context = self.get_context_data(form=form)
+        context['formset'] = VariacaoProdutoFormSet(self.request.POST, self.request.FILES, instance=self.object)
+        return self.render_to_response(context)
 
 
 class ProdutoDeleteView(DeleteView):
     model = Produto
-    template_name = 'produtos/deleta_produto.html'
+    template_name = 'produtos/produtos_delete.html'
     success_url = reverse_lazy('produtos:produtos_list')
 

@@ -92,7 +92,7 @@
                     <td>
                         <a href="{% url 'produtos:produtos_detail' produtos.id %}" class="btn btn-sm btn-edit">View</a>
                         <a href="{% url 'produtos:produtos_form' produtos.id %}" class="btn btn-sm btn-edit">Editar</a>
-                        <button class="btn btn-sm btn-delete" data-id="{{ produtos.id }}">Excluir</button>
+                        <a href="{% url 'produtos:produtos_delete' produtos.id %}" class="btn btn-sm btn-delete">Excluir</a>
                     </td>
                 </tr>
             {% empty %}

@@ -35,12 +35,11 @@ class VariacaoProduto(models.Model):
     tamanho = models.CharField(max_length=10)
     quantidade = models.PositiveIntegerField(default=0)
     estoque_minimo = models.PositiveIntegerField(default=10)
-    codigo_barras = models.CharField(max_length=128, unique=True, null=True, blank=True)
+    codigo_barras = models.CharField(max_length=128, null=True, blank=True)
     barcode_image = models.ImageField(upload_to='barcodes/', blank=True, null=True)
     qr_code = models.ImageField(upload_to='qrcodes/', blank=True, null=True)
 
     class Meta:
-        unique_together = ('produto', 'tamanho')
         ordering = ['tamanho']
 
     def __str__(self):

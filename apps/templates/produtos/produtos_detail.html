@@ -9,7 +9,7 @@
         <h1>Detalhe do Produto: {{ produto.nome }}</h1>
         <div class="filter-buttons">
             <a href="{% url 'produtos:produtos_form' produto.id %}" class="btn btn-edit">Editar Produto</a>
-            <button class="btn btn-delete" data-id="{{ produto.id }}">Excluir Produto</button>
+            <a href="{% url 'produtos:produtos_delete' produto.id %}" class="btn btn-delete">Excluir Produto</a>
             <a href="{% url 'produtos:produtos_list' %}" class="btn btn-secondary">Voltar</a>
         </div>
     </div>
@@ -89,15 +89,15 @@
                         <td>{{ variacao.tamanho }}</td>
                         <td>{{ variacao.quantidade }}</td>
                         <td>{{ variacao.estoque_minimo }}</td>
-                        <td>{% if object.barcode_image %}
-                            <a href="{{ object.barcode_image.url }}" download="barcode_{{ object.codigo_barras|default:'produto' }}.png" class=" btn btn-sm btn-primary">Baixar</a>
+                        <td>{% if variacao.barcode_image %}
+                            <a href="{{ variacao.barcode_image.url }}" download="barcode_{{ variacao.codigo_barras|default:'produto' }}.png" class=" btn btn-sm btn-primary">Baixar</a>
                             {% else %}
                             <span class="detail-value">Não gerado</span>
                                 
                             {% endif %}
                         </td>
-                        <td>{% if object.barcode_image %}
-                            <a href="{{ object.qr_code.url }}" download="qrcode_{{ object.codigo_barras|default:'produto' }}.png" class="btn btn-sm btn-primary">Baixar</a>
+                        <td>{% if variacao.barcode_image %}
+                            <a href="{{ variacao.qr_code.url }}" download="qrcode_{{ variacao.codigo_barras|default:'produto' }}.png" class="btn btn-sm btn-primary">Baixar</a>
                             {% else %}
                             <span class="detail-value">Não gerado</span>
                                 
