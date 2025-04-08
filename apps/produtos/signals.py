@@ -11,7 +11,7 @@ from django.db.models import F
 @receiver(post_save, sender=VariacaoProduto)
 def gerar_codigos_produto(sender, instance, created, **kwargs):
     """
-    Gera a imagem do código de barras e o QR code após salvar o produto,
+    Gera a imagem do código de barras e o QR code após salvar o VariacaoProduto,
     apenas se o campo codigo_barras estiver preenchido e as imagens ainda não existirem.
     """
     if instance.codigo_barras:

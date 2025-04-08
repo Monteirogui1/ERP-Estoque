@@ -75,12 +75,9 @@ class ProdutoCreateView(CreateView):
         formset = VariacaoProdutoFormSet(self.request.POST, self.request.FILES, instance=self.object)
         if formset.is_valid():
             formset.save()
-            return super().form_valid(form)
+            return reverse_lazy('produtos:produtos_list')
         else:
             return self.form_invalid(form)
-
-    def form_invalid(self, form):
-        return self.render_to_response(self.get_context_data(form=form))
 
 
 class ProdutoDetailView(DetailView):
@@ -113,12 +110,9 @@ class ProdutoUpdateView(UpdateView):
         formset = VariacaoProdutoFormSet(self.request.POST, self.request.FILES, instance=self.object)
         if formset.is_valid():
             formset.save()
-            return super().form_valid(form)
+            return reverse_lazy('produtos:produtos_list')
         else:
             return self.form_invalid(form)
-
-    def form_invalid(self, form):
-        return self.render_to_response(self.get_context_data(form=form))
 
 
 class ProdutoDeleteView(DeleteView):

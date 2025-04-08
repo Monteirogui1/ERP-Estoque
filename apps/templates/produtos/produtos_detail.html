@@ -80,6 +80,7 @@
                     <th>Quantidade</th>
                     <th>Estoque Mínimo</th>
                     <th>Código de Barras</th>
+                    <th>QRCode</th>
                 </tr>
             </thead>
             <tbody>
@@ -88,7 +89,20 @@
                         <td>{{ variacao.tamanho }}</td>
                         <td>{{ variacao.quantidade }}</td>
                         <td>{{ variacao.estoque_minimo }}</td>
-                        <td>{{ variacao.codigo_barras|default:"Não informado" }}</td>
+                        <td>{% if object.barcode_image %}
+                            <a href="{{ object.barcode_image.url }}" download="barcode_{{ object.codigo_barras|default:'produto' }}.png" class=" btn btn-sm btn-primary">Baixar</a>
+                            {% else %}
+                            <span class="detail-value">Não gerado</span>
+                                
+                            {% endif %}
+                        </td>
+                        <td>{% if object.barcode_image %}
+                            <a href="{{ object.qr_code.url }}" download="qrcode_{{ object.codigo_barras|default:'produto' }}.png" class="btn btn-sm btn-primary">Baixar</a>
+                            {% else %}
+                            <span class="detail-value">Não gerado</span>
+                                
+                            {% endif %}
+                        </td>    
                     </tr>
                 {% empty %}
                     <tr>
