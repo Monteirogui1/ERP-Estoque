@@ -1,8 +1,11 @@
 from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
 from django.db import transaction
+from import_export.signals import post_import
+from apps.produtos.models import VariacaoProduto
 from .models import Movimentacao, Lote, HistoricoEstoque
 from ..notificacao.models import Notificacao
+from apps.produtos.resources import VariacaoProdutoResource
 
 
 @receiver(post_save, sender=Movimentacao)
@@ -89,3 +92,12 @@ def revert_variacao_quantidade(sender, instance, **kwargs):
             motivo=f"Exclusão de lote {instance.numero_lote} com {instance.quantidade} unidades.",
             usuario=None
         )
+
+
+@receiver(post_import, sender=VariacaoProdutoResource)
+def post_import_variacao(model, **kwargs):
+    for instance in VariacaoProduto.objects.all():
+        if instance.quantidade <= instance.estoque_minimo:
+            mensagem = (f"O produto {instance.produto.nome} ({instance.tamanho}) está com estoque baixo: "
+                        f"{instance.quantidade} unidades (limite: {instance.estoque_minimo}).")
+            Notificacao.objects.create(produto=instance.produto, mensagem=mensagem)
