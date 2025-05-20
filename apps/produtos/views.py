@@ -8,7 +8,7 @@ from .forms import ProdutoForm, VariacaoProdutoFormSet
 from ..categorias.models import Categoria
 from ..fornecedor.models import Fornecedor
 from ..marcas.models import Marca
-from ..movimentacao.models import Movimentacao
+from ..movimentacao.models import Movimentacao, Lote
 
 
 class ProdutoListView(ListView):
@@ -89,6 +89,7 @@ class ProdutoDetailView(DetailView):
         context = super().get_context_data(**kwargs)
         context['variacaoproduto'] = self.object.variacoes.all()
         context['movimentacao'] = Movimentacao.objects.filter(produto__produto=self.object).order_by('-created_at')
+        context['loteproduto'] = Lote.objects.filter(variacao__produto=self.object).order_by('-created_at')
         return context
 
 

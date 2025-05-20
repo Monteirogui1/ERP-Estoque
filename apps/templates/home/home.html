@@ -1,126 +1,190 @@
 {% extends 'layouts/base.html' %}
+{% load humanize %}
 
-{% block title %}Dashboard - ERP{% endblock %}
+{% block title %}Painel - ERP{% endblock %}
 
 {% block conteudo %}
 <div class="content">
-    <div class="page-header">
-        <h1>Dashboard</h1>
-    </div>
-
-    <!-- Métricas -->
-    <div class="metrics">
-        <div class="metric-card">
-            <h3>Total de Produtos em Estoque</h3>
-            <p>{{ produtos_metricas.total_quantidade }}</p>
-        </div>
-        <div class="metric-card">
-            <h3>Total de Preço de Custo</h3>
-            <p>R$ {{ produtos_metricas.total_preco_custo }}</p>
-        </div>
-        <div class="metric-card">
-            <h3>Total de Preço de Venda</h3>
-            <p>R$ {{ produtos_metricas.total_preco_venda }}</p>
-        </div>
-        <div class="metric-card">
-            <h3>Total de Lucro Estimado</h3>
-            <p>R$ {{ produtos_metricas.total_lucro }}</p>
+    <div class="page-header d-flex justify-content-between align-items-center">
+        <h1>Painel</h1>
+        <div class="quick-actions">
+            <a href="{% url 'movimentacao:movimentacao_create' %}" class="btn btn-primary btn-sm me-2" aria-label="Criar nova movimentação">
+                <i class="bi bi-plus-circle"></i> Nova Movimentação
+            </a>
+            <a href="{% url 'movimentacao:lote_create' %}" class="btn btn-primary btn-sm me-2" aria-label="Criar novo lote">
+                <i class="bi bi-boxes"></i> Novo Lote
+            </a>
+            <a href="{% url 'movimentacao:ajuste_estoque_create' %}" class="btn btn-primary btn-sm" aria-label="Ajustar estoque">
+                <i class="bi bi-gear"></i> Ajustar Estoque
+            </a>
         </div>
     </div>
 
-    <!-- Métricas de Vendas -->
+    <!-- Formulário de Filtro de Período -->
+    <form method="get" class="filter-form">
+        <div class="form-group">
+            {{ form.periodo.label_tag }}
+            {{ form.periodo }}
+            {% if form.periodo.errors %}
+                <div class="text-danger">{{ form.periodo.errors }}</div>
+            {% endif %}
+        </div>
+        <div class="form-group">
+            {{ form.data_inicio.label_tag }}
+            {{ form.data_inicio }}
+            {% if form.data_inicio.errors %}
+                <div class="text-danger">{{ form.data_inicio.errors }}</div>
+            {% endif %}
+        </div>
+        <div class="form-group">
+            {{ form.data_fim.label_tag }}
+            {{ form.data_fim }}
+            {% if form.data_fim.errors %}
+                <div class="text-danger">{{ form.data_fim.errors }}</div>
+            {% endif %}
+        </div>
+        <div class="filter-buttons">
+            <button type="submit" class="btn btn-primary">Filtrar</button>
+            <a href="{% url 'home:dashboard' %}" class="btn btn-secondary">Limpar</a>
+        </div>
+    </form>
+
+    <!-- Cards de Métricas -->
     <div class="metrics">
         <div class="metric-card">
             <h3>Total de Vendas</h3>
-            <p>{{ vendas_metricas.total_vendas }}</p>
+            <p>{{ metricas.total_vendas|intcomma }}</p>
         </div>
         <div class="metric-card">
-            <h3>Total de Produtos Vendidos</h3>
-            <p>{{ vendas_metricas.total_produtos_vendidos }}</p>
+            <h3>Produtos Vendidos</h3>
+            <p>{{ metricas.total_produtos_vendidos|intcomma }}</p>
         </div>
         <div class="metric-card">
-            <h3>Total de Valor de Vendas</h3>
-            <p>R$ {{ vendas_metricas.total_valor_vendas }}</p>
+            <h3>Valor de Vendas</h3>
+            <p>R$ {{ metricas.total_valor_vendas|floatformat:2|intcomma }}</p>
         </div>
         <div class="metric-card">
-            <h3>Total de Lucro de Vendas</h3>
-            <p>R$ {{ vendas_metricas.total_valor_lucro }}</p>
+            <h3>Lucro</h3>
+            <p>R$ {{ metricas.total_lucro|floatformat:2|intcomma }}</p>
+        </div>
+        <div class="metric-card">
+            <h3>Total de Entradas</h3>
+            <p>{{ metricas.total_entradas|intcomma }}</p>
+        </div>
+        <div class="metric-card">
+            <h3>Produtos Entrados</h3>
+            <p>{{ metricas.total_produtos_entradas|intcomma }}</p>
+        </div>
+        <div class="metric-card">
+            <h3>Valor de Entradas</h3>
+            <p>R$ {{ metricas.total_valor_entradas|floatformat:2|intcomma }}</p>
+        </div>
+        <div class="metric-card">
+            <h3>Estoque Atual</h3>
+            <p>{{ metricas_estoque.total_estoque|intcomma }}</p>
         </div>
     </div>
 
-    <!-- Top 10 Produtos Mais Vendidos -->
-    <div class="top-10-section">
-        <h2>Top 10 Produtos Mais Vendidos</h2>
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>Posição</th>
-                    <th>Nome</th>
-                    <th>Categoria</th>
-                    <th>Marca</th>
-                    <th>Fornecedor</th>
-                    <th>Preço de Venda</th>
-                    <th>Total Vendido</th>
-                    <th>Status</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for produto in saidas.total_vendas %}
-                <tr>
-                    <td>{{ forloop.counter }}</td>
-                    <td>{{ produto.nome }}</td>
-                    <td>{{ produto.categoria.nome }}</td>
-                    <td>{{ produto.marca.nome }}</td>
-                    <td>{{ produto.fornecedor.nome }}</td>
-                    <td>R$ {{ produto.preco_venda }}</td>
-                    <td>{{ produto.total_vendido|default:"0" }}</td>
-                    <td>{{ produto.status|yesno:"Ativo,Inativo" }}</td>
-                </tr>
-                {% empty %}
-                <tr>
-                    <td colspan="8">Nenhum dado disponível.</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+    <!-- Gráficos -->
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Vendas por Categoria</h5>
+                    <div class="chart-container">
+                        <canvas id="vendasPorCategoriaChart"></canvas>
+                    </div>
+                    <script id="vendasPorCategoriaData" type="application/json">
+                        [
+                            {% for item in metricas.vendas_por_categoria %}
+                                {
+                                    "categoria": "{{ item.produto__produto__categoria__nome|escapejs }}",
+                                    "total_vendido": {{ item.total_vendido }}
+                                }{% if not forloop.last %},{% endif %}
+                            {% endfor %}
+                        ]
+                    </script>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Vendas por Período</h5>
+                    <div class="chart-container">
+                        <canvas id="vendasPorPeriodoChart"></canvas>
+                    </div>
+                    <script id="vendasPorPeriodoData" type="application/json">
+                        {
+                            "labels": [
+                                {% for item in metricas.vendas_por_periodo %}
+                                    "{{ item.produto__produto__nome|escapejs }}"{% if not forloop.last %},{% endif %}
+                                {% endfor %}
+                            ],
+                            "valores": [
+                                {% for item in metricas.vendas_por_periodo %}
+                                    {{ item.valor_total }}{% if not forloop.last %},{% endif %}
+                                {% endfor %}
+                            ]
+                        }
+                    </script>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <!-- Top 10 Produtos Menos Vendidos -->
-    <div class="top-10-section">
-        <h2>Top 10 Produtos Menos Vendidos</h2>
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>Posição</th>
-                    <th>Nome</th>
-                    <th>Categoria</th>
-                    <th>Marca</th>
-                    <th>Fornecedor</th>
-                    <th>Preço de Venda</th>
-                    <th>Total Vendido</th>
-                    <th>Status</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for produto in saidas.sem_saidas %}
-                <tr>
-                    <td>{{ forloop.counter }}</td>
-                    <td>{{ produto.nome }}</td>
-                    <td>{{ produto.categoria.nome }}</td>
-                    <td>{{ produto.marca.nome }}</td>
-                    <td>{{ produto.fornecedor.nome }}</td>
-                    <td>R$ {{ produto.preco_venda }}</td>
-                    <td>{{ produto.total_vendido|default:"0" }}</td>
-                    <td>{{ produto.status|yesno:"Ativo,Inativo" }}</td>
-                </tr>
-                {% empty %}
-                <tr>
-                    <td colspan="8">Nenhum dado disponível.</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+    <!-- Tabelas de Produtos -->
+    <div class="row mt-4">
+        <div class="top-10-section">
+            <h3>Produtos Mais Vendidos</h3>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Produto</th>
+                        <th>Tamanho</th>
+                        <th>Total Vendido</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for produto in metricas.produtos_mais_vendidos %}
+                        <tr>
+                            <td>{{ produto.produto__produto__nome }}</td>
+                            <td>{{ produto.produto__tamanho }}</td>
+                            <td>{{ produto.total_vendido }}</td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="3" class="text-center">Nenhuma venda registrada.</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="top-10-section">
+            <h3>Produtos Menos Vendidos</h3>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Produto</th>
+                        <th>Tamanho</th>
+                        <th>Total Vendido</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for produto in metricas.produtos_menos_vendidos %}
+                        <tr>
+                            <td>{{ produto.produto__produto__nome }}</td>
+                            <td>{{ produto.produto__tamanho }}</td>
+                            <td>{{ produto.total_vendido }}</td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="3" class="text-center">Nenhuma venda registrada.</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
-
 </div>
 {% endblock %}

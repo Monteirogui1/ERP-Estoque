@@ -1,18 +1,12 @@
 {% extends 'layouts/base.html' %}
 
-{% block title %}Movimentações - ERP{% endblock %}
+{% block title %}Histórico de Estoque - ERP{% endblock %}
 
 {% block conteudo %}
 <div class="content">
     <div class="page-header">
-        <h1>Movimentações</h1>
-        
-        <div class="quick-actions">
-            <a href="{% url 'movimentacao:movimentacao_create' %}" class="btn btn-primary">Nova Movimentação</a>
-            <a href="{% url 'movimentacao:ajuste_estoque_create' %}" class="btn btn-primary btn-sm" aria-label="Ajustar estoque">
-                Ajustar Estoque
-            </a>
-        </div>
+        <h1>Histórico de Estoque</h1>
+        <a href="{% url 'movimentacao:ajuste_estoque_create' %}" class="btn btn-primary">Ajustar Estoque</a>
     </div>
 
     <!-- Formulário de filtros -->
@@ -22,17 +16,17 @@
             <input type="text" name="produto" id="produto" value="{{ request.GET.produto }}" class="form-control" placeholder="Digite o nome do produto">
         </div>
         <div class="form-group">
-            <label for="tipo">Tipo</label>
-            <select name="tipo" id="tipo" class="form-control">
+            <label for="tipo_operacao">Tipo de Operação</label>
+            <select name="tipo_operacao" id="tipo_operacao" class="form-control">
                 <option value="">Todos</option>
-                {% for value, label in tipos %}
-                    <option value="{{ value }}" {% if value == request.GET.tipo %}selected{% endif %}>{{ label }}</option>
+                {% for tipo in tipos %}
+                    <option value="{{ tipo.0 }}" {% if tipo.0 == request.GET.tipo_operacao %}selected{% endif %}>{{ tipo.1 }}</option>
                 {% endfor %}
             </select>
         </div>
         <div class="form-group">
-            <label for="quantidade">Quantidade</label>
-            <input type="number" name="quantidade" id="quantidade" value="{{ request.GET.quantidade }}" class="form-control" placeholder="Digite a quantidade">
+            <label for="usuario">Usuário</label>
+            <input type="text" name="usuario" id="usuario" value="{{ request.GET.usuario }}" class="form-control" placeholder="Digite o nome do usuário">
         </div>
         <div class="form-group">
             <label for="data">Data</label>
@@ -40,33 +34,43 @@
         </div>
         <div class="filter-buttons">
             <button type="submit" class="btn btn-primary">Filtrar</button>
-            <a href="{% url 'movimentacao:movimentacao_list' %}" class="btn btn-secondary">Limpar</a>
+            <a href="{% url 'movimentacao:historico_estoque_list' %}" class="btn btn-secondary">Limpar</a>
         </div>
     </form>
 
-    <!-- Tabela de movimentações -->
+    <!-- Tabela de histórico -->
     <table class="table">
         <thead>
             <tr>
                 <th>Produto</th>
                 <th>Tamanho</th>
                 <th>Tipo</th>
-                <th>Quantidade</th>
+                <th>Lote</th>
+                <th>Quantidade Anterior</th>
+                <th>Quantidade Nova</th>
+                <th>Usuário</th>
                 <th>Data</th>
+                <th>Ações</th>
             </tr>
         </thead>
         <tbody>
-            {% for mov in movimentacao %}
+            {% for historico in historicos %}
                 <tr>
-                    <td>{{ mov.produto.produto.nome }}</td>
-                    <td>{{ mov.produto.tamanho }}</td>
-                    <td>{{ mov.tipo }}</td>
-                    <td>{{ mov.quantidade }}</td>
-                    <td>{{ mov.created_at|date:"d/m/Y H:i" }}</td>
+                    <td>{{ historico.variacao.produto.nome }}</td>
+                    <td>{{ historico.variacao.tamanho }}</td>
+                    <td>{{ historico.get_tipo_operacao_display }}</td>
+                    <td>{{ historico.lote.numero_lote|default:"-" }}</td>
+                    <td>{{ historico.quantidade_anterior }}</td>
+                    <td>{{ historico.quantidade_nova }}</td>
+                    <td>{{ historico.usuario.username|default:"Sistema" }}</td>
+                    <td>{{ historico.created_at|date:"d/m/Y H:i" }}</td>
+                    <td>
+                        <a href="{% url 'movimentacao:historico_estoque_detail' historico.id %}" class="btn btn-sm btn-edit">Ver</a>
+                    </td>
                 </tr>
             {% empty %}
                 <tr>
-                    <td colspan="5">Nenhuma movimentação encontrada.</td>
+                    <td colspan="9" class="text-center">Nenhum registro de histórico encontrado.</td>
                 </tr>
             {% endfor %}
         </tbody>

@@ -142,5 +142,37 @@
             </tbody>
         </table>
     </div>
+
+    <div class="detail-card">
+        <h2>Lotes</h2>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Produto</th>
+                    <th>Tamanho</th>
+                    <th>Núm. Lote</th>
+                    <th>Quantidade</th>
+                    <th>Fornecedor</th>
+                    <th>Data Entrada</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for lote in loteproduto %}
+                    <tr>
+                        <td>{{ lote.variacao.produto.nome }}</td>
+                        <td>{{ lote.variacao.tamanho }}</td>
+                        <td>{{ lote.numero_lote }}</td>
+                        <td>{{ lote.quantidade }}</td>
+                        <td>{{ lote.fornecedor }}</td>
+                        <td>{{ lote.data_entrada|date:"d/m/Y H:i" }}</td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="5" class="text-center">Nenhuma movimentação registrada.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 </div>
 {% endblock %}
