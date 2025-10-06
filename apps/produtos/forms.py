@@ -40,8 +40,9 @@ class ProdutoForm(forms.ModelForm):
 class VariacaoProdutoForm(forms.ModelForm):
     class Meta:
         model = VariacaoProduto
-        fields = ['tamanho', 'estoque_minimo', 'codigo_barras']
+        fields = ['tamanho', 'estoque_minimo', 'codigo_barras', 'unidade']
         widgets = {
+            'unidade': forms.Select(attrs={'class': 'form-control'}),
             'tamanho': forms.TextInput(attrs={'class': 'form-control'}),
             'estoque_minimo': forms.NumberInput(attrs={'class': 'form-control'}),
             'codigo_barras': forms.TextInput(attrs={'class': 'form-control'}),

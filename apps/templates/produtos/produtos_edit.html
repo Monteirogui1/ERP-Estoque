@@ -100,6 +100,13 @@
                         {% endif %}
                     </div>
                     <div class="form-group">
+                        {{ variacao_form.unidade.label_tag }}
+                        {{ variacao_form.unidade }}
+                        {% if variacao_form.unidade.errors %}
+                            <div class="text-danger">{{ variacao_form.unidade.errors }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="form-group">
                         {{ variacao_form.estoque_minimo.label_tag }}
                         {{ variacao_form.estoque_minimo }}
                         {% if variacao_form.estoque_minimo.errors %}

@@ -5,6 +5,14 @@ from apps.fornecedor.models import Fornecedor
 from apps.marcas.models import Marca
 
 
+class UnidadeMedida(models.TextChoices):
+    UNIDADE = 'UN', 'Unidade'
+    MILILITRO = 'ML', 'Mililitro'
+    LITRO = 'L', 'Litro'
+    QUILOGRAMA = 'KG', 'Quilograma'
+    GRAMA = 'G', 'Grama'
+
+
 class Produto(models.Model):
     nome = models.CharField(max_length=500)
     categoria = models.ForeignKey(Categoria, on_delete=models.PROTECT, related_name='produtos',
@@ -20,6 +28,7 @@ class Produto(models.Model):
     imagem = models.ImageField(null=True, blank=True, upload_to='produtos/')
     status = models.BooleanField(default=True)
 
+
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -34,6 +43,9 @@ class VariacaoProduto(models.Model):
     produto = models.ForeignKey(Produto, on_delete=models.CASCADE, related_name='variacoes')
     tamanho = models.CharField(max_length=10)
     quantidade = models.PositiveIntegerField(default=0)
+    unidade = models.CharField(max_length=2, choices=UnidadeMedida.choices, default=UnidadeMedida.UNIDADE,
+                               help_text="Selecione a unidade de medida"
+                               )
     estoque_minimo = models.PositiveIntegerField(default=10)
     codigo_barras = models.CharField(max_length=128, null=True, blank=True)
     barcode_image = models.ImageField(upload_to='barcodes/', blank=True, null=True)

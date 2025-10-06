@@ -77,6 +77,7 @@
             <thead>
                 <tr>
                     <th>Tamanho</th>
+                    <th>Unidade</th>
                     <th>Quantidade</th>
                     <th>Estoque Mínimo</th>
                     <th>Código de Barras</th>
@@ -87,6 +88,7 @@
                 {% for variacao in variacaoproduto %}
                     <tr>
                         <td>{{ variacao.tamanho }}</td>
+                        <td>{{ variacao.unidade }}</td>
                         <td>{{ variacao.quantidade }}</td>
                         <td>{{ variacao.estoque_minimo }}</td>
                         <td>{% if variacao.barcode_image %}
