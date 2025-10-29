@@ -1,3 +1,4 @@
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import TemplateView
 from django.utils import timezone
 from datetime import timedelta
@@ -10,7 +11,7 @@ from apps.movimentacao.models import Lote, HistoricoEstoque
 from apps.notificacao.models import Notificacao
 
 
-class IndexTemplateView(TemplateView):
+class IndexTemplateView(LoginRequiredMixin, TemplateView):
     template_name = "home/home.html"
 
     def get_context_data(self, **kwargs):
@@ -44,7 +45,7 @@ class IndexTemplateView(TemplateView):
         return context
 
 
-class SearchView(View):
+class SearchView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         query = request.GET.get('q', '')
         if not query:

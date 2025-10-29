@@ -6,45 +6,64 @@ from apps.produtos.models import VariacaoProduto
 from .models import Movimentacao, Lote, HistoricoEstoque
 from ..notificacao.models import Notificacao
 from apps.produtos.resources import VariacaoProdutoResource
+from decimal import Decimal
+from ..notificacao.utils import enviar_email_estoque_minimo
+
+# Fatores para converter para a "unidade base" do estoque (kg ou L ou UN)
+FATORES = {
+    'UN': Decimal('1'),      # unidade → unidade
+    'ML': Decimal('0.001'),  # ml → L
+    'L':  Decimal('1'),      # L → L
+    'KG': Decimal('1'),      # kg → kg
+    'GR': Decimal('0.001'),  # g → kg
+}
 
 
 @receiver(post_save, sender=Movimentacao)
-def update_produto_quantidade(sender, instance, created, **kwargs):
-    if created and instance.quantidade != 0:
-        with transaction.atomic():
-            produto = instance.produto
-            quantidade_anterior = produto.quantidade
-            if instance.tipo == 'Entrada':
-                produto.quantidade += instance.quantidade
-                motivo = f"Entrada de {instance.quantidade} unidades via movimentação."
-            elif instance.tipo == 'Saída':
-                if produto.quantidade < instance.quantidade:
-                    raise ValueError("Estoque insuficiente para esta saída")
-                produto.quantidade -= instance.quantidade
-                motivo = f"Saída de {instance.quantidade} unidades via movimentação."
-            elif instance.tipo == 'Ajuste':
-                if instance.quantidade < 0:
-                    raise ValueError("Quantidade de ajuste não pode ser negativa")
-                produto.quantidade = instance.quantidade
-                motivo = f"Ajuste manual para {instance.quantidade} unidades."
-            produto.save()
+def update_variacao_quantidade(sender, instance, created, **kwargs):
+    if not created or instance.quantidade == 0:
+        return
 
-            # Registrar no histórico
-            HistoricoEstoque.objects.create(
-                variacao=produto,
-                lote=instance.lote,
-                quantidade_anterior=quantidade_anterior,
-                quantidade_nova=produto.quantidade,
-                tipo_operacao=instance.tipo,
-                motivo=motivo,
-                usuario=instance.request.user if hasattr(instance, 'request') else None
-            )
+    variacao = instance.produto  # VariacaoProduto
+    unidade = variacao.unidade
+    fator = FATORES.get(unidade, Decimal('1'))
+    q_base = (instance.quantidade * fator).quantize(Decimal('0.01'))
 
-            if produto.quantidade <= produto.estoque_minimo:
-                mensagem = (f"O produto {produto.produto.nome} ({produto.tamanho}) está com estoque baixo: "
-                            f"{produto.quantidade} unidades (limite: {produto.estoque_minimo}).")
-                Notificacao.objects.create(produto=produto.produto, mensagem=mensagem)
+    with transaction.atomic():
+        antes = variacao.quantidade
 
+        if instance.tipo == 'Entrada':
+            variacao.quantidade += q_base
+            motivo = f"Entrada de {instance.quantidade}{unidade}"
+        elif instance.tipo == 'Saída':
+            if variacao.quantidade < q_base:
+                raise ValueError("Estoque insuficiente para esta saída")
+            variacao.quantidade -= q_base
+            motivo = f"Saída de {instance.quantidade}{unidade}"
+        else:
+            # caso você venha a adicionar outros tipos no futuro
+            motivo = f"{instance.tipo} de {instance.quantidade}{unidade}"
+            variacao.quantidade = q_base
+
+        variacao.save()
+
+        # Registrar no histórico
+        HistoricoEstoque.objects.create(
+            variacao=variacao,
+            lote=instance.lote,
+            quantidade_anterior=antes,
+            quantidade_nova=variacao.quantidade,
+            tipo_operacao=instance.tipo,
+            motivo=motivo,
+            usuario=instance.request.user if hasattr(instance, 'request') else None
+        )
+
+        # Notificação de estoque baixo
+        if variacao.quantidade <= variacao.estoque_minimo:
+            mensagem = (f"O produto {variacao.produto.nome} ({variacao.tamanho}) está com estoque baixo: "
+                        f"{variacao.quantidade} unidades (limite: {variacao.estoque_minimo}).")
+            Notificacao.objects.create(produto=variacao.produto, mensagem=mensagem)
+            enviar_email_estoque_minimo(variacao)
 
 @receiver(post_save, sender=Lote)
 def update_variacao_quantidade(sender, instance, created, **kwargs):

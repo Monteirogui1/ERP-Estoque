@@ -6,3 +6,6 @@ migrations/
 *.jpg
 *.png
 *.jpeg
+*/migrations/
+**/migrations/
+apps/*/migrations/

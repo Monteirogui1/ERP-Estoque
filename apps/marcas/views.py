@@ -1,3 +1,4 @@
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView, DetailView, UpdateView, DeleteView
@@ -6,7 +7,7 @@ from .forms import MarcaForm
 from .models import Marca
 
 
-class MarcaListView(ListView):
+class MarcaListView(LoginRequiredMixin, ListView):
     model = Marca
     template_name = 'marcas/marca_list.html'
     context_object_name = 'marca'
@@ -29,26 +30,26 @@ class MarcaListView(ListView):
         return queryset
 
 
-class MarcaCreateView(CreateView):
+class MarcaCreateView(LoginRequiredMixin, CreateView):
     model = Marca
     template_name = 'marcas/marca_edit.html'
     form_class = MarcaForm
     success_url = reverse_lazy('marcas:marca_list')
 
 
-class MarcaDetailView(DetailView):
+class MarcaDetailView(LoginRequiredMixin, DetailView):
     model = Marca
     template_name = 'marcas/detalhe_marca.html'
 
 
-class MarcaUpdateView(UpdateView):
+class MarcaUpdateView(LoginRequiredMixin, UpdateView):
     model = Marca
     template_name = 'marcas/marca_edit.html'
     form_class = MarcaForm
     success_url = reverse_lazy('marcas:marca_list')
 
 
-class MarcaDeleteView(DeleteView):
+class MarcaDeleteView(LoginRequiredMixin, DeleteView):
     model = Marca
     template_name = 'marcas/deleta_marca.html'
     success_url = reverse_lazy('marcas:marca_list')

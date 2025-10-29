@@ -1,3 +1,4 @@
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView, DetailView, UpdateView, DeleteView
@@ -9,7 +10,7 @@ from ..produtos.models import Produto
 app_name = 'fornecedores'
 
 
-class FornecedorListView(ListView):
+class FornecedorListView(LoginRequiredMixin, ListView):
     model = Fornecedor
     template_name = 'fornecedor/fornecedores_list.html'
     context_object_name = 'fornecedores'
@@ -38,14 +39,14 @@ class FornecedorListView(ListView):
         return queryset
 
 
-class FornecedorCreateView(CreateView):
+class FornecedorCreateView(LoginRequiredMixin, CreateView):
     model = Fornecedor
     template_name = 'fornecedor/fornecedores_edit.html'
     form_class = FornecedorForm
     success_url = reverse_lazy('fornecedores:fornecedores_list')
 
 
-class FornecedorDetailView(DetailView):
+class FornecedorDetailView(LoginRequiredMixin, DetailView):
     model = Fornecedor
     template_name = 'fornecedor/fornecedores_detail.html'
 
@@ -56,14 +57,14 @@ class FornecedorDetailView(DetailView):
         return context
 
 
-class FornecedorUpdateView(UpdateView):
+class FornecedorUpdateView(LoginRequiredMixin, UpdateView):
     model = Fornecedor
     template_name = 'fornecedor/fornecedores_edit.html'
     form_class = FornecedorForm
     success_url = reverse_lazy('fornecedores:fornecedores_list')
 
 
-class FornecedorDeleteView(DeleteView):
+class FornecedorDeleteView(LoginRequiredMixin, DeleteView):
     model = Fornecedor
     template_name = 'fornecedor/deleta_fornecedor.html'
     success_url = reverse_lazy('fornecedores:fornecedores_list')

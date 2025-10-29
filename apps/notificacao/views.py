@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.views.generic import TemplateView, RedirectView
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
 from .models import Notificacao
@@ -14,7 +15,7 @@ from .models import Notificacao
 #         return context
 #
 
-class MarcarNotificacaoLidaView(RedirectView):
+class MarcarNotificacaoLidaView(LoginRequiredMixin, RedirectView):
 
     def get(self, request, *args, **kwargs):
         notificacao_id = self.kwargs.get('notificacao_id')

@@ -1,4 +1,6 @@
 from datetime import datetime
+
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView, DetailView, DeleteView, UpdateView
@@ -13,7 +15,7 @@ from ..fornecedor.models import Fornecedor
 from django.contrib.auth.models import User
 
 
-class LoteListView(ListView):
+class LoteListView(LoginRequiredMixin, ListView):
     model = Lote
     template_name = 'movimentacao/lote_list.html'
     context_object_name = 'lotes'
@@ -46,14 +48,14 @@ class LoteListView(ListView):
         return context
 
 
-class LoteCreateView(CreateView):
+class LoteCreateView(LoginRequiredMixin, CreateView):
     model = Lote
     template_name = 'movimentacao/lote_create.html'
     form_class = LoteForm
     success_url = reverse_lazy('movimentacao:lote_list')
 
 
-class LoteDetailView(DetailView):
+class LoteDetailView(LoginRequiredMixin, DetailView):
     model = Lote
     template_name = 'movimentacao/lote_detail.html'
     context_object_name = 'lote'
@@ -64,20 +66,20 @@ class LoteDetailView(DetailView):
         return context
 
 
-class LoteUpdateView(UpdateView):
+class LoteUpdateView(LoginRequiredMixin, UpdateView):
     model = Lote
     template_name = 'movimentacao/lote_create.html'
     form_class = LoteForm
     success_url = reverse_lazy('movimentacao:lote_list')
 
 
-class LoteDeleteView(DeleteView):
+class LoteDeleteView(LoginRequiredMixin, DeleteView):
     model = Lote
     template_name = 'movimentacao/lote_delete.html'
     success_url = reverse_lazy('movimentacao:lote_list')
 
 
-class MovimentacaoListView(ListView):
+class MovimentacaoListView(LoginRequiredMixin, ListView):
     model = Movimentacao
     template_name = 'movimentacao/movimentacao_list.html'
     context_object_name = 'movimentacao'
@@ -115,7 +117,7 @@ class MovimentacaoListView(ListView):
         return context
 
 
-class MovimentacaoCreateView(CreateView):
+class MovimentacaoCreateView(LoginRequiredMixin, CreateView):
     model = Movimentacao
     template_name = 'movimentacao/movimentacao_create.html'
     form_class = MovimentacaoForm
@@ -127,18 +129,18 @@ class MovimentacaoCreateView(CreateView):
         return kwargs
 
 
-class MovimentacaoDetailView(DetailView):
+class MovimentacaoDetailView(LoginRequiredMixin, DetailView):
     model = Movimentacao
     template_name = 'movimentacao/detalhe_entrada.html'
 
 
-class MovimentacaoDeleteView(DeleteView):
+class MovimentacaoDeleteView(LoginRequiredMixin, DeleteView):
     model = Movimentacao
     template_name = 'movimentacao/movimentacao_delete.html'
     success_url = reverse_lazy('movimentacao:movimentacao_list')
 
 
-class HistoricoEstoqueListView(ListView):
+class HistoricoEstoqueListView(LoginRequiredMixin, ListView):
     model = HistoricoEstoque
     template_name = 'movimentacao/historico_estoque_list.html'
     context_object_name = 'historicos'
@@ -173,13 +175,13 @@ class HistoricoEstoqueListView(ListView):
         return context
 
 
-class HistoricoEstoqueDetailView(DetailView):
+class HistoricoEstoqueDetailView(LoginRequiredMixin, DetailView):
     model = HistoricoEstoque
     template_name = 'movimentacao/historico_estoque_detail.html'
     context_object_name = 'historico'
 
 
-class AjusteEstoqueCreateView(CreateView):
+class AjusteEstoqueCreateView(LoginRequiredMixin, CreateView):
     model = Movimentacao
     template_name = 'movimentacao/ajuste_estoque_create.html'
     form_class = HistoricoEstoqueForm
@@ -191,7 +193,7 @@ class AjusteEstoqueCreateView(CreateView):
         return kwargs
 
 
-class BuscarProdutoPorCodigoView(View):
+class BuscarProdutoPorCodigoView(LoginRequiredMixin, View):
     @method_decorator(require_GET)
     def get(self, request, *args, **kwargs):
         codigo = request.GET.get('codigo_barras', '')
@@ -209,7 +211,7 @@ class BuscarProdutoPorCodigoView(View):
             return JsonResponse({'error': 'Variação de produto não encontrada'}, status=404)
 
 
-class ValidarNumeroLoteView(View):
+class ValidarNumeroLoteView(LoginRequiredMixin, View):
     @method_decorator(require_GET)
     def get(self, request, *args, **kwargs):
         numero_lote = request.GET.get('numero_lote', '')

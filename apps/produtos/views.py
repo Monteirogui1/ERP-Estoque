@@ -1,5 +1,6 @@
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView, DetailView, UpdateView, DeleteView, View
 from django.shortcuts import render
@@ -17,7 +18,7 @@ from ..marcas.models import Marca
 from ..movimentacao.models import Movimentacao, Lote
 
 
-class ProdutoListView(ListView):
+class ProdutoListView(LoginRequiredMixin, ListView):
     model = Produto
     template_name = 'produtos/produtos_list.html'
     context_object_name = 'produto'
@@ -63,7 +64,7 @@ class ProdutoListView(ListView):
 
 
 
-class ProdutoCreateView(CreateView):
+class ProdutoCreateView(LoginRequiredMixin, CreateView):
     model = Produto
     template_name = 'produtos/produtos_edit.html'
     form_class = ProdutoForm
@@ -87,7 +88,7 @@ class ProdutoCreateView(CreateView):
             return self.form_invalid(form)
 
 
-class ProdutoDetailView(DetailView):
+class ProdutoDetailView(LoginRequiredMixin, DetailView):
     model = Produto
     template_name = 'produtos/produtos_detail.html'
 
@@ -99,7 +100,7 @@ class ProdutoDetailView(DetailView):
         return context
 
 
-class ProdutoUpdateView(UpdateView):
+class ProdutoUpdateView(LoginRequiredMixin, UpdateView):
     model = Produto
     template_name = 'produtos/produtos_edit.html'
     form_class = ProdutoForm
@@ -130,7 +131,7 @@ class ProdutoUpdateView(UpdateView):
         return self.render_to_response(context)
 
 
-class ProdutoDeleteView(DeleteView):
+class ProdutoDeleteView(LoginRequiredMixin, DeleteView):
     model = Produto
     template_name = 'produtos/produtos_delete.html'
     success_url = reverse_lazy('produtos:produtos_list')
@@ -160,7 +161,7 @@ class ProdutoExportView(View):
 
         return response
 
-class ProdutoImportView(View):
+class ProdutoImportView(LoginRequiredMixin, View):
     def get(self, request):
         return render(request, 'produtos/import.html', {'form': ImportForm()})
 
@@ -191,7 +192,7 @@ class ProdutoImportView(View):
 
         return render(request, 'produtos/import.html', {'form': ImportForm()})
 
-class VariacaoProdutoExportView(View):
+class VariacaoProdutoExportView(LoginRequiredMixin, View):
     def get(self, request):
         return render(request, 'produtos/export_variacao.html', {'form': ImportForm()})
 
@@ -215,7 +216,7 @@ class VariacaoProdutoExportView(View):
 
         return response
 
-class VariacaoProdutoImportView(View):
+class VariacaoProdutoImportView(LoginRequiredMixin, View):
     def get(self, request):
         return render(request, 'produtos/import_variacao.html', {'form': ImportForm()})
 
