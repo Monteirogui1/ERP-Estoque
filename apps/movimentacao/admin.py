@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Movimentacao, Lote, HistoricoEstoque
+from .models import Movimentacao, Lote, HistoricoEstoque, TipoMovimentacao
 
 
 class LoteAdmin(admin.ModelAdmin):
@@ -15,5 +15,6 @@ class HistoricoEstoqueAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Movimentacao)
-admin.site.register(Lote, LoteAdmin)
+admin.site.register(Lote)
 admin.site.register(HistoricoEstoque, HistoricoEstoqueAdmin)
+admin.site.register(TipoMovimentacao)

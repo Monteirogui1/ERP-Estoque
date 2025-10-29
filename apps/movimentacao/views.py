@@ -8,11 +8,15 @@ from django.http import JsonResponse
 from django.views.decorators.http import require_GET
 from django.utils.decorators import method_decorator
 from django.views import View
-from .models import Movimentacao, Lote, HistoricoEstoque
+from .models import Movimentacao, Lote, HistoricoEstoque, TipoMovimentacao
 from .forms import MovimentacaoForm, LoteForm, HistoricoEstoqueForm
 from ..produtos.models import Produto, VariacaoProduto
 from ..fornecedor.models import Fornecedor
 from django.contrib.auth.models import User
+from django.shortcuts import render, redirect
+from django.contrib import messages
+import xml.etree.ElementTree as ET
+
 
 
 class LoteListView(LoginRequiredMixin, ListView):
@@ -217,3 +221,75 @@ class ValidarNumeroLoteView(LoginRequiredMixin, View):
         numero_lote = request.GET.get('numero_lote', '')
         exists = Lote.objects.filter(numero_lote=numero_lote).exists()
         return JsonResponse({'exists': exists})
+
+
+
+class ImportarNFeView(View):
+    template_name = 'movimentacao/importar_nfe.html'
+
+    def get(self, request):
+        return render(request, self.template_name)
+
+    def post(self, request):
+        nfe_file = request.FILES['nfe_xml']
+        tree = ET.parse(nfe_file)
+        root = tree.getroot()
+        ns = {'nfe': 'http://www.portalfiscal.inf.br/nfe'}
+
+        erros = []
+        produtos_importados = 0
+
+        for det in root.findall('.//nfe:det', ns):
+            try:
+                codigo_barras = det.find('.//nfe:cProd', ns).text
+                quantidade = float(det.find('.//nfe:qCom', ns).text.replace(',', '.'))
+                preco_unitario = float(det.find('.//nfe:vUnCom', ns).text.replace(',', '.'))
+                variacao = VariacaoProduto.objects.filter(codigo_barras=codigo_barras).first()
+                if not variacao:
+                    erros.append(f"Produto não cadastrado: {codigo_barras}")
+                    continue
+
+                numero_lote = f"{codigo_barras}-{root.find('.//nfe:ide/nfe:nNF', ns).text}"
+                lote = Lote.objects.create(
+                    variacao=variacao,
+                    numero_lote=numero_lote,
+                    quantidade=quantidade,
+                    preco_unitario=preco_unitario,
+                    documento_nfe=nfe_file
+                )
+
+                # Ajuste de estoque e custo
+                variacao.quantidade += quantidade
+                variacao.save()
+                produto = variacao.produto
+                produto.preco_custo = preco_unitario  # OU média, se preferir
+                produto.save()
+
+                produtos_importados += 1
+
+            except Exception as e:
+                erros.append(str(e))
+
+        if produtos_importados > 0:
+            messages.success(request, f'{produtos_importados} produtos/lotes importados com sucesso.')
+        if erros:
+            messages.error(request, f'Erros: {", ".join(erros)}')
+        return redirect('movimentacao:lote_list')
+
+
+class TipoMovimentacaoListView(ListView):
+    model = TipoMovimentacao
+    template_name = 'movimentacao/tipos_movimentacao_list.html'
+    context_object_name = 'tipos'
+
+class TipoMovimentacaoCreateView(CreateView):
+    model = TipoMovimentacao
+    form_class = TipoMovimentacaoForm
+    template_name = 'movimentacao/tipo_movimentacao_edit.html'
+    success_url = reverse_lazy('movimentacao:tipos_movimentacao_list')
+
+class TipoMovimentacaoUpdateView(UpdateView):
+    model = TipoMovimentacao
+    form_class = TipoMovimentacaoForm
+    template_name = 'movimentacao/tipo_movimentacao_edit.html'
+    success_url = reverse_lazy('movimentacao:tipos_movimentacao_list')

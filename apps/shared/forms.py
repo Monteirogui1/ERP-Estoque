@@ -1,4 +1,5 @@
 from django import forms
+from .models import Cliente
 
 class ImportForm(forms.Form):
     file_format = forms.ChoiceField(
@@ -15,3 +16,14 @@ class ImportForm(forms.Form):
         required=False,
         widget=forms.FileInput(attrs={'class': 'form-control'})
     )
+
+class ClienteWizardForm(forms.ModelForm):
+    class Meta:
+        model = Cliente
+        fields = ['nome', 'dominio', 'banco']
+
+    senha_admin = forms.CharField(
+        label='Senha do admin', widget=forms.PasswordInput, required=False,
+        help_text='(Opcional) Cria usuário admin inicial'
+    )
+    email_admin = forms.EmailField(label='E-mail do admin', required=False)

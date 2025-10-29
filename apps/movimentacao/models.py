@@ -6,45 +6,36 @@ from apps.fornecedor.models import Fornecedor
 
 class Lote(models.Model):
     variacao = models.ForeignKey(VariacaoProduto, on_delete=models.PROTECT, related_name='lotes')
-    numero_lote = models.CharField(max_length=100, unique=True)
+    numero_lote = models.CharField(max_length=100)
+    quantidade = models.DecimalField(max_digits=15, decimal_places=4)
+    preco_unitario = models.DecimalField(max_digits=15, decimal_places=4, null=True, blank=True)
+    documento_nfe = models.FileField(upload_to='notas_fiscais/', null=True, blank=True)
     data_entrada = models.DateTimeField(auto_now_add=True)
-    quantidade = models.PositiveIntegerField()
-    fornecedor = models.ForeignKey(Fornecedor, on_delete=models.PROTECT, related_name='lotes')
-    descricao = models.TextField(null=True, blank=True)
-
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
-    class Meta:
-        ordering = ['-created_at']
-        verbose_name = 'Lote'
-        verbose_name_plural = 'Lotes'
 
     def __str__(self):
-        return f"Lote {self.numero_lote} - {self.variacao}"
+        return f"Lote {self.numero_lote} - {self.variacao.produto.nome} ({self.quantidade} {self.variacao.unidade})"
 
+
+
+class TipoMovimentacao(models.Model):
+    nome = models.CharField(max_length=100)
+    entrada_saida = models.CharField(max_length=10, choices=(('Entrada', 'Entrada'), ('Saída', 'Saída')))
+    descricao = models.TextField(blank=True, null=True)
+
+    def __str__(self):
+        return self.nome
 
 class Movimentacao(models.Model):
-    TIPO_CHOICES = (
-        ('Entrada', 'Entrada'),
-        ('Saída', 'Saída'),
-    )
-
-    produto = models.ForeignKey(VariacaoProduto, on_delete=models.PROTECT, related_name='movimentacao')
-    lote = models.ForeignKey(Lote, on_delete=models.PROTECT, related_name='movimentacoes', null=True, blank=True)
-    tipo = models.CharField(max_length=10, choices=TIPO_CHOICES)
-    quantidade = models.IntegerField()
-    descricao = models.TextField(null=True, blank=True)
-
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
-    class Meta:
-        ordering = ['-created_at']
+    tipo = models.ForeignKey(TipoMovimentacao, on_delete=models.PROTECT)
+    variacao = models.ForeignKey(VariacaoProduto, on_delete=models.PROTECT, related_name='movimentacoes')
+    quantidade = models.DecimalField(max_digits=15, decimal_places=4)
+    data = models.DateTimeField(auto_now_add=True)
+    usuario = models.ForeignKey(User, on_delete=models.PROTECT)
+    lote = models.ForeignKey('Lote', on_delete=models.PROTECT, null=True, blank=True)
+    observacao = models.TextField(blank=True, null=True)
 
     def __str__(self):
-        return f"{self.produto.produto.nome} - {self.tipo} - {self.quantidade}"
-
+        return f"{self.tipo} - {self.variacao} ({self.quantidade}) em {self.data:%d/%m/%Y}"
 
 class HistoricoEstoque(models.Model):
     TIPO_OPERACAO = (

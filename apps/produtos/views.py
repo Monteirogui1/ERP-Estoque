@@ -10,7 +10,7 @@ from .resources import ProdutoResource, VariacaoProdutoResource
 from apps.shared.forms import ImportForm
 from django.contrib import messages
 
-from .models import Produto
+from .models import Produto, UnidadeMedida, CampoDinamico
 from .forms import ProdutoForm, VariacaoProdutoFormSet
 from ..categorias.models import Categoria
 from ..fornecedor.models import Fornecedor
@@ -29,7 +29,7 @@ class ProdutoListView(LoginRequiredMixin, ListView):
         codigo_barras = self.request.GET.get('codigo_barras')
         status = self.request.GET.get('status')
         num_serie = self.request.GET.get('num_serie')
-        categoria = self.request.GET.get('categoria')
+        # categoria = self.request.GET.get('categoria')
         marca = self.request.GET.get('marca')
         fornecedor = self.request.GET.get('fornecedor')
         ordernar = self.request.GET.get('ordenar')
@@ -246,3 +246,39 @@ class VariacaoProdutoImportView(LoginRequiredMixin, View):
                 messages.error(request, f'Erro: {str(e)}')
 
         return render(request, 'produtos/import_variacao.html', {'form': ImportForm()})
+
+
+class UnidadeMedidaListView(ListView):
+    model = UnidadeMedida
+    template_name = 'produtos/unidade_medida_list.html'
+    context_object_name = 'unidades'
+
+class UnidadeMedidaCreateView(CreateView):
+    model = UnidadeMedida
+    form_class = UnidadeMedidaForm
+    template_name = 'produtos/unidade_medida_edit.html'
+    success_url = reverse_lazy('produtos:unidade_medida_list')
+
+class UnidadeMedidaUpdateView(UpdateView):
+    model = UnidadeMedida
+    form_class = UnidadeMedidaForm
+    template_name = 'produtos/unidade_medida_edit.html'
+    success_url = reverse_lazy('produtos:unidade_medida_list')
+
+
+class CampoDinamicoListView(ListView):
+    model = CampoDinamico
+    template_name = 'produtos/campos_dinamicos_list.html'
+    context_object_name = 'campos'
+
+class CampoDinamicoCreateView(CreateView):
+    model = CampoDinamico
+    form_class = CampoDinamicoForm
+    template_name = 'produtos/campo_dinamico_edit.html'
+    success_url = reverse_lazy('produtos:campos_dinamicos_list')
+
+class CampoDinamicoUpdateView(UpdateView):
+    model = CampoDinamico
+    form_class = CampoDinamicoForm
+    template_name = 'produtos/campo_dinamico_edit.html'
+    success_url = reverse_lazy('produtos:campos_dinamicos_list')

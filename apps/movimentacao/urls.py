@@ -3,7 +3,8 @@ from .views import (
     MovimentacaoListView, MovimentacaoCreateView, MovimentacaoDetailView, MovimentacaoDeleteView,
     LoteListView, LoteCreateView, LoteDetailView, LoteUpdateView, LoteDeleteView,
     HistoricoEstoqueListView, HistoricoEstoqueDetailView, AjusteEstoqueCreateView,
-    BuscarProdutoPorCodigoView, ValidarNumeroLoteView
+    BuscarProdutoPorCodigoView, ValidarNumeroLoteView, ImportarNFeView, TipoMovimentacaoListView,
+    TipoMovimentacaoCreateView, TipoMovimentacaoUpdateView
 )
 
 app_name = 'movimentacao'
@@ -23,4 +24,11 @@ urlpatterns = [
     path('historico-estoque/<int:pk>/detalhe/', HistoricoEstoqueDetailView.as_view(), name='historico_estoque_detail'),
     path('ajuste-estoque/criar/', AjusteEstoqueCreateView.as_view(), name='ajuste_estoque_create'),
     path('lote/validar-numero/', ValidarNumeroLoteView.as_view(), name='validar_numero_lote'),
+    # Tipos de Movimentação
+    path('tipo/', TipoMovimentacaoListView.as_view(), name='tipo_movimentacao_list'),
+    path('tipo/novo/', TipoMovimentacaoCreateView.as_view(), name='tipo_movimentacao_create'),
+    path('tipo/editar/<int:pk>/', TipoMovimentacaoUpdateView.as_view(), name='tipo_movimentacao_edit'),
+    
+    # Importação de Nota Fiscal (NFe) via Lote
+    path('lote/importar-nfe/', ImportarNFeView.as_view(), name='importar_nfe'),
 ]

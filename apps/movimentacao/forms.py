@@ -1,5 +1,5 @@
 from django import forms
-from .models import Lote, Movimentacao, HistoricoEstoque
+from .models import Lote, Movimentacao, HistoricoEstoque, TipoMovimentacao
 
 
 class LoteForm(forms.ModelForm):
@@ -96,3 +96,18 @@ class HistoricoEstoqueForm(forms.ModelForm):
         if commit:
             instance.save()
         return instance
+
+
+class TipoMovimentacaoForm(forms.ModelForm):
+    class Meta:
+        model = TipoMovimentacao
+        fields = ['nome', 'entrada_saida', 'descricao']
+        labels = {
+            'nome': 'Nome do Tipo',
+            'entrada_saida': 'Entrada ou Saída?',
+            'descricao': 'Descrição',
+        }
+        widgets = {
+            'nome': forms.TextInput(attrs={'class': 'form-control'}),
+            'descricao': forms.Textarea(attrs={'rows': 2, 'class': 'form-control'}),
+        }

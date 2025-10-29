@@ -48,6 +48,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'core.middleware.ClienteDBMiddleware',
 ]
 
 ROOT_URLCONF = 'core.urls'
@@ -80,6 +81,7 @@ WSGI_APPLICATION = 'core.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
+DATABASE_ROUTERS = ['core.db_router.ClienteDBRouter']
 
 DATABASES = {
     'default': {
