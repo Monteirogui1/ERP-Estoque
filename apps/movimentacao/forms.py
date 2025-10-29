@@ -1,25 +1,40 @@
 from django import forms
 from .models import Lote, Movimentacao, HistoricoEstoque, TipoMovimentacao
+from ..produtos.models import VariacaoProduto
 
 
 class LoteForm(forms.ModelForm):
     class Meta:
         model = Lote
-        fields = ['variacao', 'numero_lote', 'quantidade', 'fornecedor', 'descricao']
-        widgets = {
-            'variacao': forms.Select(attrs={'class': 'form-control', 'autofocus': True}),
-            'numero_lote': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ex.: LOTE2025-001'}),
-            'quantidade': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Ex.: 100'}),
-            'fornecedor': forms.Select(attrs={'class': 'form-control', 'placeholder': 'Selecione o fornecedor'}),
-            'descricao': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Descrição opcional do lote'}),
-        }
+        fields = [
+            'variacao',
+            'numero_lote',
+            'quantidade',
+            'preco_unitario',
+            'documento_nfe'
+        ]
         labels = {
-            'variacao': 'Variação do Produto',
+            'variacao': 'Produto/Variação',
             'numero_lote': 'Número do Lote',
             'quantidade': 'Quantidade',
-            'fornecedor': 'Fornecedor',
-            'descricao': 'Descrição',
+            'preco_unitario': 'Preço Unitário',
+            'documento_nfe': 'Nota Fiscal (XML ou PDF)',
         }
+        widgets = {
+            'variacao': forms.Select(attrs={'class': 'form-control'}),
+            'numero_lote': forms.TextInput(attrs={'class': 'form-control'}),
+            'quantidade': forms.NumberInput(attrs={'class': 'form-control', 'step': '0.01'}),
+            'preco_unitario': forms.NumberInput(attrs={'class': 'form-control', 'step': '0.01'}),
+            'documento_nfe': forms.ClearableFileInput(attrs={'class': 'form-control'}),
+        }
+        help_texts = {
+            'quantidade': 'Informe a quantidade total deste lote.',
+            'documento_nfe': 'Anexe a nota fiscal correspondente ao lote, se houver.',
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['variacao'].queryset = VariacaoProduto.objects.select_related('produto').filter(produto__status=True)
 
     def clean_numero_lote(self):
         numero_lote = self.cleaned_data.get('numero_lote')
@@ -37,29 +52,40 @@ class LoteForm(forms.ModelForm):
 
 
 class MovimentacaoForm(forms.ModelForm):
-    tipo = forms.ChoiceField(
-        choices=Movimentacao.TIPO_CHOICES,
-        widget=forms.Select(attrs={'class': 'form-control', 'autofocus': True}),
-        label='Tipo'
-    )
-
     class Meta:
         model = Movimentacao
-        fields = ['produto', 'lote', 'tipo', 'quantidade', 'descricao']
-        widgets = {
-            'produto': forms.Select(attrs={'class': 'form-control', 'placeholder': 'Selecione o produto'}),
-            'lote': forms.Select(attrs={'class': 'form-control', 'placeholder': 'Selecione o lote (opcional)'}),
-            'quantidade': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Ex.: 50'}),
-            'descricao': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Descrição da movimentação'}),
-        }
+        fields = [
+            'tipo',
+            'variacao',
+            'quantidade',
+            'lote',
+            'observacao',
+        ]
         labels = {
-            'produto': 'Produto',
-            'lote': 'Lote',
-            'tipo': 'Tipo de Operação',
+            'tipo': 'Tipo de Movimentação',
+            'variacao': 'Produto/Variação',
             'quantidade': 'Quantidade',
-            'descricao': 'Descrição',
+            'lote': 'Lote (opcional)',
+            'observacao': 'Observação',
+        }
+        widgets = {
+            'tipo': forms.Select(attrs={'class': 'form-control'}),
+            'variacao': forms.Select(attrs={'class': 'form-control'}),
+            'quantidade': forms.NumberInput(attrs={'class': 'form-control', 'step': '0.01', 'min': 0}),
+            'lote': forms.Select(attrs={'class': 'form-control'}),
+            'observacao': forms.Textarea(attrs={'class': 'form-control', 'rows': 2}),
+        }
+        help_texts = {
+            'quantidade': 'Informe a quantidade a ser movimentada (unidade do produto selecionado).',
+            'lote': 'Selecione um lote se desejar vincular a movimentação.',
         }
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Exibe apenas variações e lotes ativos. Ajuste o filtro se precisar!
+        self.fields['variacao'].queryset = VariacaoProduto.objects.select_related('produto').filter(produto__status=True)
+        self.fields['lote'].queryset = Lote.objects.all()
+        self.fields['tipo'].queryset = TipoMovimentacao.objects.all()
     def clean_quantidade(self):
         quantidade = self.cleaned_data.get('quantidade')
         tipo = self.cleaned_data.get('tipo')
@@ -71,16 +97,16 @@ class MovimentacaoForm(forms.ModelForm):
 class HistoricoEstoqueForm(forms.ModelForm):
     class Meta:
         model = Movimentacao
-        fields = ['produto', 'quantidade', 'descricao']
-        widgets = {
-            'produto': forms.Select(attrs={'class': 'form-control', 'autofocus': True}),
-            'quantidade': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Ex.: 100'}),
-            'descricao': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Motivo do ajuste'}),
-        }
+        fields = ['variacao', 'quantidade', 'observacao']
         labels = {
-            'produto': 'Variação do Produto',
+            'variacao': 'Variação do Produto',
             'quantidade': 'Nova Quantidade',
-            'descricao': 'Motivo do Ajuste',
+            'observacao': 'Motivo do Ajuste',
+        }
+        widgets = {
+            'variacao': forms.Select(attrs={'class': 'form-control', 'autofocus': True}),
+            'quantidade': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Ex.: 100'}),
+            'observacao': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Motivo do ajuste'}),
         }
 
     def clean_quantidade(self):
@@ -88,14 +114,6 @@ class HistoricoEstoqueForm(forms.ModelForm):
         if quantidade < 0:
             raise forms.ValidationError("A quantidade não pode ser negativa.")
         return quantidade
-
-    def save(self, commit=True, user=None):
-        instance = super().save(commit=False)
-        instance.tipo = 'Ajuste'
-        instance.request = self.initial.get('request')  # Passar request para o signal
-        if commit:
-            instance.save()
-        return instance
 
 
 class TipoMovimentacaoForm(forms.ModelForm):
@@ -111,3 +129,10 @@ class TipoMovimentacaoForm(forms.ModelForm):
             'nome': forms.TextInput(attrs={'class': 'form-control'}),
             'descricao': forms.Textarea(attrs={'rows': 2, 'class': 'form-control'}),
         }
+
+class ImportacaoMovimentacaoForm(forms.Form):
+    arquivo = forms.FileField(
+        label='Arquivo CSV/Excel/XML',
+        widget=forms.ClearableFileInput(attrs={'class': 'form-control'}),
+        help_text='Importe um arquivo contendo as movimentações/lotes em massa.'
+    )
