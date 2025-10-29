@@ -4,45 +4,50 @@ from .models import Produto, VariacaoProduto, UnidadeMedida, CampoDinamico
 class ProdutoForm(forms.ModelForm):
     class Meta:
         model = Produto
-        fields = [
-            'nome', 'categoria', 'marca', 'fornecedor', 'descricao', 'num_serie',
-            'preco_custo', 'preco_venda', 'imagem', 'status'
-        ]
+        fields = ['nome', 'status', 'categoria', 'marca', 'fornecedor',
+                  'descricao', 'num_serie', 'preco_custo', 'preco_venda', 'imagem']
         widgets = {
-            'descricao': forms.Textarea(attrs={'rows': 2, 'class': 'form-control'}),
-            'status': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+            'nome': forms.TextInput(attrs={'class': 'form-control'}),
+            'categoria': forms.Select(attrs={'class': 'form-control'}),
+            'marca': forms.Select(attrs={'class': 'form-control'}),
+            'fornecedor': forms.Select(attrs={'class': 'form-control'}),
+            'descricao': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+            'num_serie': forms.TextInput(attrs={'class': 'form-control'}),
+            'preco_custo': forms.NumberInput(attrs={'class': 'form-control'}),
+            'preco_venda': forms.NumberInput(attrs={'class': 'form-control'}),
+            'imagem': forms.FileInput(attrs={'class': 'form-control', 'accept': 'image/*'}),
         }
         labels = {
-            'num_serie': 'Nº Série',
+            'nome': 'Nome',
+            'status': 'Status',
+            'categoria': 'Categoria',
+            'marca': 'Marca',
+            'fornecedor': 'Fornecedor',
+            'descricao': 'Descrição',
+            'num_serie': 'Número de Série',
             'preco_custo': 'Preço de Custo',
             'preco_venda': 'Preço de Venda',
             'imagem': 'Imagem do Produto',
-            'status': 'Ativo'
         }
         help_texts = {
-            'status': 'Desmarque para ocultar este produto nas vendas.',
             'imagem': 'Imagem principal do produto.',
         }
 
 class VariacaoProdutoForm(forms.ModelForm):
     class Meta:
         model = VariacaoProduto
-        fields = [
-            'tamanho', 'quantidade', 'unidade', 'estoque_minimo',
-            'codigo_barras', 'barcode_image', 'qr_code'
-        ]
-        labels = {
-            'tamanho': 'Tamanho/Cor/Var.',
-            'quantidade': 'Qtd. Estoque',
-            'unidade': 'Unidade de Medida',
-            'estoque_minimo': 'Estoque Mínimo',
-            'codigo_barras': 'Código de Barras',
-            'barcode_image': 'Imagem Código de Barras',
-            'qr_code': 'QR Code',
-        }
+        fields = ['tamanho', 'estoque_minimo', 'codigo_barras', 'unidade']
         widgets = {
-            'quantidade': forms.NumberInput(attrs={'step': '0.01', 'class': 'form-control'}),
+            'unidade': forms.Select(attrs={'class': 'form-control'}),
+            'tamanho': forms.TextInput(attrs={'class': 'form-control'}),
             'estoque_minimo': forms.NumberInput(attrs={'class': 'form-control'}),
+            'codigo_barras': forms.TextInput(attrs={'class': 'form-control'}),
+        }
+
+        labels = {
+            'tamanho': 'Tamanho',
+            'estoque_minimo': 'Estoque Mínimo',
+            'codigo_barras': 'Código de Barras'
         }
         help_texts = {
             'tamanho': 'Exemplo: P, M, G, 500ml, Azul.',

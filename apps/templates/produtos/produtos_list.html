@@ -4,33 +4,68 @@
 <div class="content">
     <div class="page-header">
         <h1>Produtos</h1>
-        <a href="{% url 'produtos:produtos_create' %}" class="btn btn-primary">Novo Produto</a>
+        <a href="{% url 'produtos:produtos_form' %}" class="btn btn-primary">Novo Produto</a>
     </div>
-    <form method="get" class="filter-form" autocomplete="off">
-        <div class="form-row">
-            <div class="form-group">
-                <input type="text" name="nome" value="{{ request.GET.nome }}" class="form-control" placeholder="Buscar nome do produto...">
-            </div>
-            <div class="form-group">
-                <select name="categoria" class="form-control">
-                    <option value="">Categoria</option>
-                    {% for categoria in categorias %}
-                    <option value="{{ categoria.id }}" {% if categoria.id|stringformat:"s" == request.GET.categoria %}selected{% endif %}>{{ categoria.nome }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-            <div class="form-group">
-                <select name="marca" class="form-control">
-                    <option value="">Marca</option>
-                    {% for marca in marcas %}
-                    <option value="{{ marca.id }}" {% if marca.id|stringformat:"s" == request.GET.marca %}selected{% endif %}>{{ marca.nome }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-            <div class="form-group">
-                <button type="submit" class="btn btn-primary">Filtrar</button>
-                <a href="{% url 'produtos:produtos_list' %}" class="btn btn-secondary">Limpar</a>
-            </div>
+    <form method="get" class="filter-form">
+        <div class="form-group">
+            <label for="nome">Nome do Produto</label>
+            <input type="text" name="nome" id="nome" value="{{ request.GET.nome }}" class="form-control" placeholder="Nome do Produto">
+        </div>
+        <div class="form-group">
+            <label for="codigo_barras">Código de Barras</label>
+            <input type="text" name="codigo_barras" id="codigo_barras" value="{{ request.GET.codigo_barras }}" class="form-control" placeholder="Código de Barras">
+        </div>
+        <div class="form-group">
+            <label for="num_serie">Nº Série</label>
+            <input type="text" name="num_serie" id="num_serie" value="{{ request.GET.num_serie }}" class="form-control" placeholder="Nº Série">
+        </div>
+        <div class="form-group">
+            <label for="fornecedor">Fornecedor</label>
+            <select name="fornecedor" id="fornecedor" class="form-control">
+                <option value="">Fornecedor</option>
+                {% for f in fornecedores %}
+                    <option value="{{ f.id }}" {% if request.GET.fornecedor == f.id|stringformat:"s" %}selected{% endif %}>{{ f.nome }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="marca">Marca</label>
+            <select name="marca" id="marca" class="form-control">
+                <option value="">Marca</option>
+                {% for m in marcas %}
+                    <option value="{{ m.id }}" {% if request.GET.marca == m.id|stringformat:"s" %}selected{% endif %}>{{ m.nome }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="categoria">Categoria</label>
+            <select name="categoria" id="categoria" class="form-control">
+                <option value="">Categoria</option>
+                {% for c in categorias %}
+                    <option value="{{ c.id }}" {% if request.GET.categoria == c.id|stringformat:"s" %}selected{% endif %}>{{ c.nome }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="status">Status</label>
+            <select name="status" id="status" class="form-control">
+                <option value="">Status</option>
+                <option value="true" {% if request.GET.status == "true" %}selected{% endif %}>Ativo</option>
+                <option value="false" {% if request.GET.status == "false" %}selected{% endif %}>Inativo</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="ordenar">Ordenar por</label>
+            <select name="ordenar" id="ordenar" class="form-control">
+                <option value="">Ordenar por</option>
+                <option value="nome" {% if request.GET.ordenar == "nome" %}selected{% endif %}>Nome</option>
+                <option value="codigo_barras" {% if request.GET.ordenar == "codigo_barras" %}selected{% endif %}>Código de Barras</option>
+                <option value="-nome" {% if request.GET.ordenar == "-nome" %}selected{% endif %}>Nome (Z-A)</option>
+            </select>
+        </div>
+        <div class="filter-buttons">
+            <button type="submit" class="btn btn-primary">Filtrar</button>
+            <a href="{% url 'produtos:produtos_list' %}" class="btn btn-secondary">Limpar</a>
         </div>
     </form>
     <table class="table">

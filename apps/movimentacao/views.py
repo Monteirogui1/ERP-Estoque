@@ -29,7 +29,8 @@ class LoteListView(LoginRequiredMixin, ListView):
         numero_lote = self.request.GET.get('numero_lote')
         produto = self.request.GET.get('produto')
         fornecedor = self.request.GET.get('fornecedor')
-        data = self.request.GET.get('data')
+        data_inicial = self.request.GET.get('data_inicial')
+        data_final = self.request.GET.get('data_final')
 
         if numero_lote:
             queryset = queryset.filter(numero_lote__icontains=numero_lote)
@@ -37,11 +38,17 @@ class LoteListView(LoginRequiredMixin, ListView):
             queryset = queryset.filter(variacao__produto__nome__icontains=produto)
         if fornecedor:
             queryset = queryset.filter(fornecedor__nome__icontains=fornecedor)
-        if data:
+        if data_inicial:
             try:
-                data_obj = datetime.strptime(data, '%Y-%m-%d')
-                queryset = queryset.filter(data_entrada__date=data_obj)
-            except ValueError:
+                dt_ini = datetime.strptime(data_inicial, '%Y-%m-%d')
+                queryset = queryset.filter(data_entrada__date__gte=dt_ini)
+            except (ValueError, TypeError):
+                pass
+        if data_final:
+            try:
+                dt_fim = datetime.strptime(data_final, '%Y-%m-%d')
+                queryset = queryset.filter(data_entrada__date__lte=dt_fim)
+            except (ValueError, TypeError):
                 pass
         return queryset
 
@@ -94,29 +101,37 @@ class MovimentacaoListView(LoginRequiredMixin, ListView):
         produto = self.request.GET.get('produto')
         tipo = self.request.GET.get('tipo')
         quantidade = self.request.GET.get('quantidade')
-        data = self.request.GET.get('data')
+        data_inicial = self.request.GET.get('data_inicial')
+        data_final = self.request.GET.get('data_final')
 
         if produto:
-            queryset = queryset.filter(produto__produto__nome__icontains=produto)
+            queryset = queryset.filter(variacao__produto__nome__icontains=produto)
         if tipo:
-            queryset = queryset.filter(tipo=tipo)
+            queryset = queryset.filter(
+                tipo__nome__iexact=tipo)  # Use __iexact para ForeignKey, ou apenas tipo=tipo se for CharField
         if quantidade:
             try:
                 quantidade = int(quantidade)
                 queryset = queryset.filter(quantidade=quantidade)
-            except ValueError:
+            except (ValueError, TypeError):
                 pass
-        if data:
+        if data_inicial:
             try:
-                data_obj = datetime.strptime(data, '%Y-%m-%d')
-                queryset = queryset.filter(created_at__date=data_obj)
-            except ValueError:
+                dt_ini = datetime.strptime(data_inicial, '%Y-%m-%d')
+                queryset = queryset.filter(data__gte=dt_ini)
+            except (ValueError, TypeError):
+                pass
+        if data_final:
+            try:
+                dt_fim = datetime.strptime(data_final, '%Y-%m-%d')
+                queryset = queryset.filter(data__lte=dt_fim)
+            except (ValueError, TypeError):
                 pass
         return queryset
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['tipos'] = MovimentacaoForm().fields['tipo'].choices
+        context['tipos'] = [t.nome for t in TipoMovimentacao.objects.all()]
         context['produtos'] = Produto.objects.all()
         return context
 

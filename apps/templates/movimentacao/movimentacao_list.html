@@ -3,20 +3,44 @@
 {% block conteudo %}
 <div class="content">
     <div class="page-header">
-        <h1>Histórico de Movimentação de Estoque</h1>
+        <h1>Movimentações</h1>
+
+        <div class="quick-actions">
+            <a href="{% url 'movimentacao:movimentacao_create' %}" class="btn btn-primary">Nova Movimentação</a>
+            <!--<a href="{% url 'movimentacao:ajuste_estoque_create' %}" class="btn btn-primary btn-sm" aria-label="Ajustar estoque">
+                Ajustar Estoque
+            </a>-->
+        </div>
     </div>
     <form method="get" class="filter-form">
-        <div class="form-row">
-            <div class="form-group">
-                <input type="text" name="produto" value="{{ request.GET.produto }}" class="form-control" placeholder="Produto...">
-            </div>
-            <div class="form-group">
-                <input type="text" name="tipo" value="{{ request.GET.tipo }}" class="form-control" placeholder="Tipo de Movimentação...">
-            </div>
-            <div class="form-group">
-                <button type="submit" class="btn btn-primary">Filtrar</button>
-                <a href="{% url 'movimentacao:movimentacao_list' %}" class="btn btn-secondary">Limpar</a>
-            </div>
+        <div class="form-group">
+            <label for="produto">Produto</label>
+            <input type="text" name="produto" id="produto" value="{{ request.GET.produto }}" class="form-control" placeholder="Produto">
+        </div>
+        <div class="form-group">
+            <label for="tipo">Tipo</label>
+            <select name="tipo" id="tipo" class="form-control">
+                <option value="">Tipo</option>
+                {% for t in tipos %}
+                    <option value="{{ t }}" {% if request.GET.tipo == t %}selected{% endif %}>{{ t|capfirst }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="quantidade">Quantidade</label>
+            <input type="number" name="quantidade" id="quantidade" value="{{ request.GET.quantidade }}" min="0" class="form-control" placeholder="Quantidade">
+        </div>
+        <div class="form-group">
+            <label for="data_inicial">Data Inicial</label>
+            <input type="date" name="data_inicial" id="data_inicial" value="{{ request.GET.data_inicial }}" class="form-control">
+        </div>
+        <div class="form-group">
+            <label for="data_final">Data Final</label>
+            <input type="date" name="data_final" id="data_final" value="{{ request.GET.data_final }}" class="form-control">
+        </div>
+        <div class="filter-buttons">
+            <button type="submit" class="btn btn-primary">Filtrar</button>
+            <a href="{% url 'movimentacao:movimentacao_list' %}" class="btn btn-secondary">Limpar</a>
         </div>
     </form>
     <table class="table">
@@ -41,7 +65,7 @@
                 <td>{{ m.variacao.tamanho|default:"-" }}</td>
                 <td>{{ m.quantidade|floatformat:2 }} {{ m.variacao.unidade }}</td>
                 <td>{{ m.usuario }}</td>
-                <td>{{ m.lote.numero_lote if m.lote }}</td>
+                <td>{% if m.lote %}{{ m.lote.numero_lote }}{% else %}None{% endif %}</td>
                 <td>{{ m.observacao }}</td>
             </tr>
             {% empty %}

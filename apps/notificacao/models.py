@@ -4,7 +4,7 @@ from apps.produtos.models import Produto
 
 
 class Notificacao(models.Model):
-    produto = models.ForeignKey(Produto, on_delete=models.PROTECT, related_name='produtos')
+    produto = models.ForeignKey(Produto, on_delete=models.PROTECT, related_name='notificacoes')
     mensagem = models.TextField()
     lida = models.BooleanField(default=False)
 

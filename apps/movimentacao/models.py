@@ -6,11 +6,13 @@ from apps.fornecedor.models import Fornecedor
 
 class Lote(models.Model):
     variacao = models.ForeignKey(VariacaoProduto, on_delete=models.PROTECT, related_name='lotes')
+    fornecedor = models.ForeignKey(Fornecedor, on_delete=models.PROTECT, null=True, blank=True)
     numero_lote = models.CharField(max_length=100)
     quantidade = models.DecimalField(max_digits=15, decimal_places=4)
     preco_unitario = models.DecimalField(max_digits=15, decimal_places=4, null=True, blank=True)
     documento_nfe = models.FileField(upload_to='notas_fiscais/', null=True, blank=True)
     data_entrada = models.DateTimeField(auto_now_add=True)
+    usuario = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
 
     def __str__(self):
         return f"Lote {self.numero_lote} - {self.variacao.produto.nome} ({self.quantidade} {self.variacao.unidade})"
@@ -48,8 +50,8 @@ class HistoricoEstoque(models.Model):
 
     variacao = models.ForeignKey(VariacaoProduto, on_delete=models.PROTECT, related_name='historico')
     lote = models.ForeignKey(Lote, on_delete=models.SET_NULL, related_name='historico', null=True, blank=True)
-    quantidade_anterior = models.PositiveIntegerField()
-    quantidade_nova = models.PositiveIntegerField()
+    quantidade_anterior = models.DecimalField(max_digits=20, decimal_places=4)
+    quantidade_nova = models.DecimalField(max_digits=20, decimal_places=4)
     tipo_operacao = models.CharField(max_length=20, choices=TIPO_OPERACAO)
     motivo = models.TextField()
     usuario = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)

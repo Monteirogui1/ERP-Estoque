@@ -29,10 +29,10 @@ class ProdutoListView(LoginRequiredMixin, ListView):
         codigo_barras = self.request.GET.get('codigo_barras')
         status = self.request.GET.get('status')
         num_serie = self.request.GET.get('num_serie')
-        # categoria = self.request.GET.get('categoria')
+        categoria = self.request.GET.get('categoria')  # Descomente se usar!
         marca = self.request.GET.get('marca')
         fornecedor = self.request.GET.get('fornecedor')
-        ordernar = self.request.GET.get('ordenar')
+        ordenar = self.request.GET.get('ordenar')
 
         if nome:
             queryset = queryset.filter(nome__icontains=nome)
@@ -44,12 +44,14 @@ class ProdutoListView(LoginRequiredMixin, ListView):
             queryset = queryset.filter(fornecedor__id=fornecedor)
         if marca:
             queryset = queryset.filter(marca__id=marca)
+        if categoria:
+            queryset = queryset.filter(categoria__id=categoria)
         if status == 'true':
             queryset = queryset.filter(status=True)
-        if status == 'false':
+        elif status == 'false':
             queryset = queryset.filter(status=False)
-        if ordernar:
-            queryset = queryset.order_by(ordernar)
+        if ordenar:
+            queryset = queryset.order_by(ordenar)
         else:
             queryset = queryset.order_by('nome')
 
@@ -57,9 +59,9 @@ class ProdutoListView(LoginRequiredMixin, ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-
         context['fornecedores'] = Fornecedor.objects.all()
         context['marcas'] = Marca.objects.all()
+        context['categorias'] = Categoria.objects.all()  # Adicione se usar categoria
         return context
 
 

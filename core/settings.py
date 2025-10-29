@@ -31,6 +31,7 @@ INSTALLED_APPS = [
     'django.contrib.humanize',
     'import_export',
     'apps',
+    'apps.shared',
     'apps.authentication',
     'apps.categorias',
     'apps.marcas',
