@@ -9,7 +9,7 @@ from django.views.decorators.http import require_GET
 from django.utils.decorators import method_decorator
 from django.views import View
 from .models import Movimentacao, Lote, HistoricoEstoque, TipoMovimentacao
-from .forms import MovimentacaoForm, LoteForm, HistoricoEstoqueForm
+from .forms import MovimentacaoForm, LoteForm, HistoricoEstoqueForm, TipoMovimentacaoForm
 from ..produtos.models import Produto, VariacaoProduto
 from ..fornecedor.models import Fornecedor
 from django.contrib.auth.models import User

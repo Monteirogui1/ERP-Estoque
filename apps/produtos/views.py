@@ -11,7 +11,7 @@ from apps.shared.forms import ImportForm
 from django.contrib import messages
 
 from .models import Produto, UnidadeMedida, CampoDinamico
-from .forms import ProdutoForm, VariacaoProdutoFormSet
+from .forms import ProdutoForm, VariacaoProdutoFormSet, CampoDinamicoForm, UnidadeMedidaForm
 from ..categorias.models import Categoria
 from ..fornecedor.models import Fornecedor
 from ..marcas.models import Marca
