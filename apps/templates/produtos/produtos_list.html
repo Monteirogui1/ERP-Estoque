@@ -81,29 +81,29 @@
             </tr>
         </thead>
         <tbody>
-            {% for produto in produtos %}
+            {% for produtos in produto %}
             <tr>
-                <td>{{ produto.nome }}</td>
-                <td>{{ produto.categoria }}</td>
-                <td>{{ produto.marca }}</td>
-                <td>{{ produto.fornecedor }}</td>
+                <td>{{ produtos.nome }}</td>
+                <td>{{ produtos.categoria }}</td>
+                <td>{{ produtos.marca }}</td>
+                <td>{{ produtos.fornecedor }}</td>
                 <td>
-                    {% for v in produto.variacoes.all %}
+                    {% for v in produtos.variacoes.all %}
                         {{ v.tamanho|default:"-" }}: {{ v.quantidade|floatformat:2 }} {{ v.unidade }}<br>
                     {% empty %}
                         <span>-</span>
                     {% endfor %}
                 </td>
                 <td>
-                    {% if produto.status %}
+                    {% if produtos.status %}
                         <span class="badge badge-success">Sim</span>
                     {% else %}
                         <span class="badge badge-danger">Não</span>
                     {% endif %}
                 </td>
                 <td>
-                    <a href="{% url 'produtos:produtos_detail' produto.id %}" class="btn btn-sm btn-primary">Detalhe</a>
-                    <a href="{% url 'produtos:produtos_edit' produto.id %}" class="btn btn-sm btn-edit">Editar</a>
+                    <a href="{% url 'produtos:produtos_detail' produtos.id %}" class="btn btn-sm btn-primary">Detalhe</a>
+                    <a href="{% url 'produtos:produtos_form' produtos.id %}" class="btn btn-sm btn-edit">Editar</a>
                 </td>
             </tr>
             {% empty %}

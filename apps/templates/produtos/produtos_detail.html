@@ -4,7 +4,7 @@
 <div class="content">
     <div class="page-header">
         <h1>{{ produto.nome }}</h1>
-        <a href="{% url 'produtos:produtos_edit' produto.id %}" class="btn btn-edit">Editar</a>
+        <a href="{% url 'produtos:produtos_form' produto.id %}" class="btn btn-edit">Editar</a>
         <a href="{% url 'produtos:produtos_list' %}" class="btn btn-secondary">Voltar</a>
     </div>
     <div class="detail-card">
@@ -19,7 +19,7 @@
                     {% endif %}
                 </div>
                 <div class="detail-row"><span class="detail-label">Estoque:</span>
-                    {% for v in produto.variacoes.all %}
+                    {% for v in produto.variacaoproduto.all %}
                         {{ v.tamanho|default:"-" }}: {{ v.quantidade|floatformat:2 }} {{ v.unidade }}<br>
                     {% empty %}
                         <span>-</span>
@@ -104,7 +104,7 @@
                 </tr>
             </thead>
             <tbody>
-                {% for m in produto.variacoes.all|map:"movimentacoes.all"|sum %}
+                {% for m in produtos.variacoes.all %}
                 <tr>
                     <td>{{ m.data|date:"d/m/Y H:i" }}</td>
                     <td>{{ m.tipo.nome }}</td>

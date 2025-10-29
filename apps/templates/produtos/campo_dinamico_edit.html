@@ -4,7 +4,7 @@
 <div class="content">
     <div class="page-header">
         <h1>{% if form.instance.pk %}Editar Campo Dinâmico{% else %}Novo Campo Dinâmico{% endif %}</h1>
-        <a href="{% url 'produtos:campos_dinamicos_list' %}" class="btn btn-secondary">Voltar</a>
+        <a href="{% url 'produtos:campo_dinamico_list' %}" class="btn btn-secondary">Voltar</a>
     </div>
     <form method="post" autocomplete="off">
         {% csrf_token %}

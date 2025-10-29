@@ -5,7 +5,9 @@ from apps.notificacao.models import Notificacao
 from .utils import enviar_email_estoque_minimo
 
 @receiver(post_save, sender=VariacaoProduto)
-def verificar_estoque_minimo(sender, instance, **kwargs):
+def verificar_estoque_minimo(sender, instance, created,**kwargs):
+    if created:
+        return
     # Só alerta se estiver igual ou abaixo do mínimo e não tiver notificação não lida
     if instance.quantidade <= instance.estoque_minimo:
         not_exist = not Notificacao.objects.filter(

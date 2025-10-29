@@ -57,7 +57,7 @@
             </tr>
         </thead>
         <tbody>
-            {% for m in movimentacoes %}
+            {% for m in movimentacao %}
             <tr>
                 <td>{{ m.data|date:"d/m/Y H:i" }}</td>
                 <td>{{ m.tipo.nome }}</td>
@@ -65,7 +65,7 @@
                 <td>{{ m.variacao.tamanho|default:"-" }}</td>
                 <td>{{ m.quantidade|floatformat:2 }} {{ m.variacao.unidade }}</td>
                 <td>{{ m.usuario }}</td>
-                <td>{% if m.lote %}{{ m.lote.numero_lote }}{% else %}None{% endif %}</td>
+                <td>{% if m.lote %}{{ m.lote.numero_lote }}{% else %}N/A{% endif %}</td>
                 <td>{{ m.observacao }}</td>
             </tr>
             {% empty %}

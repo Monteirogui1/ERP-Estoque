@@ -147,10 +147,10 @@ LOGOUT_REDIRECT_URL = reverse_lazy('authentication:login')  # Redireciona para l
 
 # EMAIL
 
-EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-EMAIL_HOST = "smtp.seuprovedor.com"
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.seudominio.com'  # exemplo: smtp.gmail.com
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = "usuario@seuprovedor.com"
-EMAIL_HOST_PASSWORD = "sua_senha"
-DEFAULT_FROM_EMAIL = "ERP Estoque <no-reply@frilog.com.br>"
+EMAIL_HOST_USER = 'seu-email@dominio.com'
+EMAIL_HOST_PASSWORD = 'sua-senha'
+DEFAULT_FROM_EMAIL = 'seu-email@dominio.com'

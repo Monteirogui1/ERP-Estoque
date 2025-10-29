@@ -12,63 +12,28 @@
 </head>
 <body>
     <div class="container">
-        <div class="sidebar">
+        <aside class="sidebar" role="navigation">
             <div class="logo">
                 <h2>ERP <span>Estoque</span></h2>
             </div>
-            <!--<form class="search-form mb-3" id="searchForm" action="{% url 'home:search' %}" method="get">
-                <div class="input-group">
-                    <input type="text" name="q" class="form-control" placeholder="Buscar produtos, lotes..." aria-label="Buscar no sistema">
-                    <button class="btn btn-outline-primary" type="submit" aria-label="Buscar"><i class="bi bi-search"></i></button>
-                </div>
-            </form>-->
             <nav>
                 <ul>
-                    <li>
-                        <a href="{% url 'home:dashboard' %}" aria-label="Painel de controle">
-                            <span class="icon"><i class="bi bi-speedometer2"></i></span> Painel
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{% url 'categorias:categoria_list' %}" aria-label="Lista de categorias">
-                            <span class="icon"><i class="bi bi-bookmarks"></i></span> Categoria
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{% url 'marcas:marca_list' %}" aria-label="Lista de marcas">
-                            <span class="icon"><i class="bi bi-tags"></i></span> Marcas
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{% url 'fornecedores:fornecedores_list' %}" aria-label="Lista de fornecedores">
-                            <span class="icon"><i class="bi bi-truck"></i></span> Fornecedores
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{% url 'produtos:produtos_list' %}" aria-label="Lista de produtos">
-                            <span class="icon"><i class="bi bi-box-seam"></i></span> Produtos
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{% url 'movimentacao:movimentacao_list' %}" aria-label="Lista de movimentações">
-                            <span class="icon"><i class="bi bi-minecart"></i></span> Movimentação
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{% url 'movimentacao:lote_list' %}" aria-label="Lista de lotes">
-                            <span class="icon"><i class="bi bi-boxes"></i></span> Lotes
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{% url 'movimentacao:historico_estoque_list' %}" aria-label="Histórico de estoque">
-                            <span class="icon"><i class="bi bi-clock-history"></i></span> Histórico de Estoque
-                        </a>
-                    </li>
+                    <li><a href="{% url 'home:dashboard' %}"><span class="icon"><i class="bi bi-speedometer2"></i></span> Painel</a></li>
+                    <li><a href="{% url 'produtos:produtos_list' %}"><span class="icon"><i class="bi bi-box-seam"></i></span> Produtos</a></li>
+                    <li><a href="{% url 'categorias:categoria_list' %}"><span class="icon"><i class="bi bi-bookmarks"></i></span> Categorias</a></li>
+                    <li><a href="{% url 'marcas:marca_list' %}"><span class="icon"><i class="bi bi-tags"></i></span> Marcas</a></li>
+                    <li><a href="{% url 'fornecedores:fornecedores_list' %}"><span class="icon"><i class="bi bi-truck"></i></span> Fornecedores</a></li>
+                    <li><a href="{% url 'movimentacao:movimentacao_list' %}"><span class="icon"><i class="bi bi-arrow-left-right"></i></span> Movimentações</a></li>
+                    <li><a href="{% url 'movimentacao:lote_list' %}"><span class="icon"><i class="bi bi-boxes"></i></span> Lotes</a></li>
+                    <li><a href="{% url 'movimentacao:historico_estoque_list' %}"><span class="icon"><i class="bi bi-clock-history"></i></span> Histórico</a></li>
+                    <li><a href="{% url 'produtos:unidade_medida_list' %}"><span class="icon"><i class="bi bi-rulers"></i></span> Unidades</a></li>
+                    <li><a href="{% url 'produtos:campo_dinamico_list' %}"><span class="icon"><i class="bi bi-sliders"></i></span> Campos Dinâmicos</a></li>
+                    <li><a href="{% url 'movimentacao:tipo_movimentacao_list' %}"><span class="icon"><i class="bi bi-repeat"></i></span> Tipos de Mov.</a></li>
                 </ul>
             </nav>
-        </div>
+        </aside>
 
-        <div class="main-content">
+        <main class="main-content" role="main">
             <header>
                 <div class="user-info">
                     <span>Bem-vindo, {{ user.username }}</span>
@@ -85,9 +50,9 @@
                                 <ul>
                                     {% for notificacao in notificacoes %}
                                         <li {% if not notificacao.lida %}class="unread"{% endif %}>
-                                            {{ notificacao.mensagem }} - {{ notificacao.criada_em|date:"d/m/Y H:i" }}
+                                            {{ notificacao.mensagem }} - {{ notificacao.created_at|date:"d/m/Y H:i" }}
                                             {% if not notificacao.lida %}
-                                                <a href="{% url 'notificacao:marcar_notificacao_lida' notificacao.id %}" class="btn btn-sm btn-primary mark-as-read" aria-label="Marcar notificação como lida">Marcar como lida</a>
+                                                <a href="{% url 'notificacao:marcar_notificacao_lida' notificacao.id %}" class="btn btn-sm btn-primary mark-as-read">Marcar como lida</a>
                                             {% endif %}
                                         </li>
                                     {% endfor %}
@@ -97,14 +62,14 @@
                             {% endif %}
                         </div>
                     </div>
-                    <form method="post" action="{% url 'authentication:logout' %}" style="display: inline;">
+                    <form method="post" action="{% url 'authentication:logout' %}">
                         {% csrf_token %}
-                        <button type="submit" class="logout-btn" aria-label="Sair do sistema"><i class="bi bi-box-arrow-right"></i></button>
+                        <button type="submit" class="logout-btn" title="Sair"><i class="bi bi-box-arrow-right"></i></button>
                     </form>
                 </div>
             </header>
             {% block conteudo %}{% endblock %}
-        </div>
+        </main>
     </div>
 
     <script src="{% static 'assets/js/script.js' %}"></script>

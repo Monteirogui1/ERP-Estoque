@@ -4,7 +4,7 @@
 <div class="content">
     <div class="page-header">
         <h1>{% if form.instance.pk %}Editar Tipo de Movimentação{% else %}Novo Tipo de Movimentação{% endif %}</h1>
-        <a href="{% url 'movimentacao:tipos_movimentacao_list' %}" class="btn btn-secondary">Voltar</a>
+        <a href="{% url 'movimentacao:tipo_movimentacao_list' %}" class="btn btn-secondary">Voltar</a>
     </div>
     <form method="post" autocomplete="off">
         {% csrf_token %}

@@ -97,8 +97,8 @@ class ProdutoDetailView(LoginRequiredMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['variacaoproduto'] = self.object.variacoes.all()
-        context['movimentacao'] = Movimentacao.objects.filter(produto__produto=self.object).order_by('-created_at')
-        context['loteproduto'] = Lote.objects.filter(variacao__produto=self.object).order_by('-created_at')
+        context['movimentacao'] = Movimentacao.objects.filter(variacao__produto=self.object).order_by('-data')
+        context['loteproduto'] = Lote.objects.filter(variacao__produto=self.object).order_by('-data_entrada')
         return context
 
 

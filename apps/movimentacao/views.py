@@ -142,10 +142,9 @@ class MovimentacaoCreateView(LoginRequiredMixin, CreateView):
     form_class = MovimentacaoForm
     success_url = reverse_lazy('movimentacao:movimentacao_list')
 
-    def get_form_kwargs(self):
-        kwargs = super().get_form_kwargs()
-        kwargs['initial']['request'] = self.request
-        return kwargs
+    def form_valid(self, form):
+        form.instance.usuario = self.request.user
+        return super().form_valid(form)
 
 
 class MovimentacaoDetailView(LoginRequiredMixin, DetailView):
@@ -301,10 +300,10 @@ class TipoMovimentacaoCreateView(CreateView):
     model = TipoMovimentacao
     form_class = TipoMovimentacaoForm
     template_name = 'movimentacao/tipo_movimentacao_edit.html'
-    success_url = reverse_lazy('movimentacao:tipos_movimentacao_list')
+    success_url = reverse_lazy('movimentacao:tipo_movimentacao_list')
 
 class TipoMovimentacaoUpdateView(UpdateView):
     model = TipoMovimentacao
     form_class = TipoMovimentacaoForm
     template_name = 'movimentacao/tipo_movimentacao_edit.html'
-    success_url = reverse_lazy('movimentacao:tipos_movimentacao_list')
+    success_url = reverse_lazy('movimentacao:tipo_movimentacao_list')
