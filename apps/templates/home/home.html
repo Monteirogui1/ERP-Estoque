@@ -148,8 +148,8 @@
                 <tbody>
                     {% for produto in metricas.produtos_mais_vendidos %}
                         <tr>
-                            <td>{{ produto.produto__produto__nome }}</td>
-                            <td>{{ produto.produto__tamanho }}</td>
+                            <td>{{ produto.variacao__produto__nome }}</td>
+                            <td>{{ produto.variacao__tamanho }}</td>
                             <td>{{ produto.total_vendido }}</td>
                         </tr>
                     {% empty %}
@@ -173,8 +173,8 @@
                 <tbody>
                     {% for produto in metricas.produtos_menos_vendidos %}
                         <tr>
-                            <td>{{ produto.produtos__produto__nome }}</td>
-                            <td>{{ produto.produtos__tamanho }}</td>
+                            <td>{{ produto.variacao__produto__nome }}</td>
+                            <td>{{ produto.variacao__tamanho }}</td>
                             <td>{{ produto.total_vendido }}</td>
                         </tr>
                     {% empty %}

@@ -102,8 +102,9 @@
                     {% endif %}
                 </td>
                 <td>
-                    <a href="{% url 'produtos:produtos_detail' produtos.id %}" class="btn btn-sm btn-primary">Detalhe</a>
+                    <a href="{% url 'produtos:produtos_detail' produtos.id %}" class="btn btn-sm btn-edit">View</a>
                     <a href="{% url 'produtos:produtos_form' produtos.id %}" class="btn btn-sm btn-edit">Editar</a>
+                    <button class="btn btn-sm btn-delete" data-id="{{ produtos.id }}">Excluir</button>
                 </td>
             </tr>
             {% empty %}

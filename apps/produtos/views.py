@@ -250,7 +250,7 @@ class VariacaoProdutoImportView(LoginRequiredMixin, View):
         return render(request, 'produtos/import_variacao.html', {'form': ImportForm()})
 
 
-class UnidadeMedidaListView(ListView):
+class UnidadeMedidaListView(LoginRequiredMixin, ListView):
     model = UnidadeMedida
     template_name = 'produtos/unidade_medida_list.html'
     context_object_name = 'unidades'
@@ -261,25 +261,25 @@ class UnidadeMedidaCreateView(CreateView):
     template_name = 'produtos/unidade_medida_edit.html'
     success_url = reverse_lazy('produtos:unidade_medida_list')
 
-class UnidadeMedidaUpdateView(UpdateView):
+class UnidadeMedidaUpdateView(LoginRequiredMixin, UpdateView):
     model = UnidadeMedida
     form_class = UnidadeMedidaForm
     template_name = 'produtos/unidade_medida_edit.html'
     success_url = reverse_lazy('produtos:unidade_medida_list')
 
 
-class CampoDinamicoListView(ListView):
+class CampoDinamicoListView(LoginRequiredMixin, ListView):
     model = CampoDinamico
     template_name = 'produtos/campos_dinamicos_list.html'
     context_object_name = 'campos'
 
-class CampoDinamicoCreateView(CreateView):
+class CampoDinamicoCreateView(LoginRequiredMixin, CreateView):
     model = CampoDinamico
     form_class = CampoDinamicoForm
     template_name = 'produtos/campo_dinamico_edit.html'
     success_url = reverse_lazy('produtos:campos_dinamicos_list')
 
-class CampoDinamicoUpdateView(UpdateView):
+class CampoDinamicoUpdateView(LoginRequiredMixin, UpdateView):
     model = CampoDinamico
     form_class = CampoDinamicoForm
     template_name = 'produtos/campo_dinamico_edit.html'

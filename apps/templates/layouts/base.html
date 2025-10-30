@@ -19,16 +19,22 @@
             <nav>
                 <ul>
                     <li><a href="{% url 'home:dashboard' %}"><span class="icon"><i class="bi bi-speedometer2"></i></span> Painel</a></li>
-                    <li><a href="{% url 'produtos:produtos_list' %}"><span class="icon"><i class="bi bi-box-seam"></i></span> Produtos</a></li>
+                    
                     <li><a href="{% url 'categorias:categoria_list' %}"><span class="icon"><i class="bi bi-bookmarks"></i></span> Categorias</a></li>
                     <li><a href="{% url 'marcas:marca_list' %}"><span class="icon"><i class="bi bi-tags"></i></span> Marcas</a></li>
                     <li><a href="{% url 'fornecedores:fornecedores_list' %}"><span class="icon"><i class="bi bi-truck"></i></span> Fornecedores</a></li>
-                    <li><a href="{% url 'movimentacao:movimentacao_list' %}"><span class="icon"><i class="bi bi-arrow-left-right"></i></span> Movimentações</a></li>
-                    <li><a href="{% url 'movimentacao:lote_list' %}"><span class="icon"><i class="bi bi-boxes"></i></span> Lotes</a></li>
-                    <li><a href="{% url 'movimentacao:historico_estoque_list' %}"><span class="icon"><i class="bi bi-clock-history"></i></span> Histórico</a></li>
+
                     <li><a href="{% url 'produtos:unidade_medida_list' %}"><span class="icon"><i class="bi bi-rulers"></i></span> Unidades</a></li>
                     <li><a href="{% url 'produtos:campo_dinamico_list' %}"><span class="icon"><i class="bi bi-sliders"></i></span> Campos Dinâmicos</a></li>
                     <li><a href="{% url 'movimentacao:tipo_movimentacao_list' %}"><span class="icon"><i class="bi bi-repeat"></i></span> Tipos de Mov.</a></li>
+                
+                    <li><a href="{% url 'produtos:produtos_list' %}"><span class="icon"><i class="bi bi-box-seam"></i></span> Produtos</a></li>
+
+                    <li><a href="{% url 'movimentacao:movimentacao_list' %}"><span class="icon"><i class="bi bi-arrow-left-right"></i></span> Movimentações</a></li>
+
+                    <li><a href="{% url 'movimentacao:lote_list' %}"><span class="icon"><i class="bi bi-boxes"></i></span> Lotes</a></li>
+
+                    <li><a href="{% url 'movimentacao:historico_estoque_list' %}"><span class="icon"><i class="bi bi-clock-history"></i></span> Histórico</a></li>
                 </ul>
             </nav>
         </aside>

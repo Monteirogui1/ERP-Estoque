@@ -238,7 +238,7 @@ class ValidarNumeroLoteView(LoginRequiredMixin, View):
 
 
 
-class ImportarNFeView(View):
+class ImportarNFeView(LoginRequiredMixin, View):
     template_name = 'movimentacao/importar_nfe.html'
 
     def get(self, request):
@@ -291,18 +291,18 @@ class ImportarNFeView(View):
         return redirect('movimentacao:lote_list')
 
 
-class TipoMovimentacaoListView(ListView):
+class TipoMovimentacaoListView(LoginRequiredMixin, ListView):
     model = TipoMovimentacao
     template_name = 'movimentacao/tipos_movimentacao_list.html'
     context_object_name = 'tipos'
 
-class TipoMovimentacaoCreateView(CreateView):
+class TipoMovimentacaoCreateView(LoginRequiredMixin, CreateView):
     model = TipoMovimentacao
     form_class = TipoMovimentacaoForm
     template_name = 'movimentacao/tipo_movimentacao_edit.html'
     success_url = reverse_lazy('movimentacao:tipo_movimentacao_list')
 
-class TipoMovimentacaoUpdateView(UpdateView):
+class TipoMovimentacaoUpdateView(LoginRequiredMixin, UpdateView):
     model = TipoMovimentacao
     form_class = TipoMovimentacaoForm
     template_name = 'movimentacao/tipo_movimentacao_edit.html'

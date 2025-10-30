@@ -87,4 +87,6 @@ class CampoDinamicoForm(forms.ModelForm):
         widgets = {
             'nome': forms.TextInput(attrs={'class': 'form-control'}),
             'obrigatorio': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+            'tipo': forms.Select(attrs={'class': 'form-control'}),
+            'categoria': forms.Select(attrs={'class': 'form-control'}),
         }

@@ -128,6 +128,7 @@ class TipoMovimentacaoForm(forms.ModelForm):
         widgets = {
             'nome': forms.TextInput(attrs={'class': 'form-control'}),
             'descricao': forms.Textarea(attrs={'rows': 2, 'class': 'form-control'}),
+            'entrada_saida': forms.Select(attrs={'class': 'form-control'})
         }
 
 class ImportacaoMovimentacaoForm(forms.Form):

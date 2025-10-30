@@ -1,3 +1,4 @@
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views import View
 from django.shortcuts import render, redirect
 from .forms import ClienteWizardForm
@@ -6,7 +7,7 @@ from django.contrib.auth.models import User
 import subprocess
 from django.contrib import messages
 
-class ClienteWizardView(View):
+class ClienteWizardView(LoginRequiredMixin, View):
     template_name = 'shared/cliente_wizard.html'
 
     def get(self, request):

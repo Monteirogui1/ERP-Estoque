@@ -2,10 +2,14 @@
 {% block title %}Detalhe do Produto{% endblock %}
 {% block conteudo %}
 <div class="content">
+    <!-- Cabeçalho -->
     <div class="page-header">
-        <h1>{{ produto.nome }}</h1>
-        <a href="{% url 'produtos:produtos_form' produto.id %}" class="btn btn-edit">Editar</a>
-        <a href="{% url 'produtos:produtos_list' %}" class="btn btn-secondary">Voltar</a>
+        <h1>Detalhe do Produto: {{ produto.nome }}</h1>
+        <div class="filter-buttons">
+            <a href="{% url 'produtos:produtos_form' produto.id %}" class="btn btn-edit">Editar Fornecedor</a>
+            <button class="btn btn-delete" data-id="{{ produto.id }}">Excluir Fornecedor</button>
+            <a href="{% url 'produtos:produtos_list' %}" class="btn btn-secondary">Voltar</a>
+        </div>
     </div>
     <div class="detail-card">
         <div class="detail-content">
@@ -44,78 +48,108 @@
             </div>
         </div>
     </div>
+    <!-- Adicionar após as informações do produto -->
     <div class="detail-card">
-        <h2>Variações e Lotes</h2>
-        {% for v in produto.variacoes.all %}
-        <div class="mb-2">
-            <b>{{ v.tamanho|default:"-" }} / {{ v.unidade }}</b> - Estoque: {{ v.quantidade|floatformat:2 }}
-            <table class="table" style="margin-bottom:0.5rem;">
-                <thead>
-                    <tr>
-                        <th>Lote</th>
-                        <th>Qtd</th>
-                        <th>Preço</th>
-                        <th>Data Entrada</th>
-                        <th>Nota Fiscal</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for lote in v.lotes.all %}
-                    <tr>
-                        <td>{{ lote.numero_lote }}</td>
-                        <td>{{ lote.quantidade|floatformat:2 }}</td>
-                        <td>
-                            {% if lote.preco_unitario %}R$ {{ lote.preco_unitario|floatformat:2 }}
-                            {% else %}-{% endif %}
-                        </td>
-                        <td>{{ lote.data_entrada|date:"d/m/Y H:i" }}</td>
-                        <td>
-                            {% if lote.documento_nfe %}
-                                <a href="{{ lote.documento_nfe.url }}" target="_blank">Ver XML</a>
-                            {% else %}
-                                -
-                            {% endif %}
-                        </td>
-                    </tr>
-                    {% empty %}
-                    <tr>
-                        <td colspan="5"><i>Sem lotes cadastrados para essa variação.</i></td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-        {% empty %}
-        <div><i>Sem variações cadastradas para esse produto.</i></div>
-        {% endfor %}
-    </div>
-    <div class="detail-card">
-        <h2>Histórico de Movimentações</h2>
+        <h2>Variações</h2>
         <table class="table">
             <thead>
                 <tr>
-                    <th>Data</th>
-                    <th>Tipo</th>
-                    <th>Variação</th>
+                    <th>Tamanho</th>
+                    <th>Unidade</th>
                     <th>Quantidade</th>
-                    <th>Lote</th>
-                    <th>Usuário</th>
-                    <th>Obs</th>
+                    <th>Estoque Mínimo</th>
+                    <th>Código de Barras</th>
+                    <th>QRCode</th>
                 </tr>
             </thead>
             <tbody>
-                {% for m in produtos.variacoes.all %}
-                <tr>
-                    <td>{{ m.data|date:"d/m/Y H:i" }}</td>
-                    <td>{{ m.tipo.nome }}</td>
-                    <td>{{ m.variacao.tamanho }}</td>
-                    <td>{{ m.quantidade }}</td>
-                    <td>{% if m.lote %}{{ m.lote.numero_lote }}{% endif %}</td>
-                    <td>{{ m.usuario }}</td>
-                    <td>{{ m.observacao }}</td>
-                </tr>
+                {% for variacao in variacaoproduto %}
+                    <tr>
+                        <td>{{ variacao.tamanho }}</td>
+                        <td>{{ variacao.unidade }}</td>
+                        <td>{{ variacao.quantidade }}</td>
+                        <td>{{ variacao.estoque_minimo }}</td>
+                        <td>{% if variacao.barcode_image %}
+                            <a href="{{ variacao.barcode_image.url }}" download="barcode_{{ variacao.codigo_barras|default:'produto' }}.png" class=" btn btn-sm btn-primary">Baixar</a>
+                            {% else %}
+                            <span class="detail-value">Não gerado</span>
+                                
+                            {% endif %}
+                        </td>
+                        <td>{% if variacao.barcode_image %}
+                            <a href="{{ variacao.qr_code.url }}" download="qrcode_{{ variacao.codigo_barras|default:'produto' }}.png" class="btn btn-sm btn-primary">Baixar</a>
+                            {% else %}
+                            <span class="detail-value">Não gerado</span>
+                                
+                            {% endif %}
+                        </td>    
+                    </tr>
                 {% empty %}
-                <tr><td colspan="7">Nenhuma movimentação registrada para este produto.</td></tr>
+                    <tr>
+                        <td colspan="4" class="text-center">Nenhuma variação cadastrada.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="detail-card">
+        <h2>Movimentações</h2>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Produto</th>
+                    <th>Tamanho</th>
+                    <th>Tipo</th>
+                    <th>Quantidade</th>
+                    <th>Data</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for mov in movimentacao %}
+                    <tr>
+                        <td>{{ mov.variacao.produto.nome }}</td>
+                        <td>{{ mov.variacao.tamanho }}</td>
+                        <td>{{ mov.tipo }}</td>
+                        <td>{{ mov.quantidade|floatformat:2 }} {{ mov.variacao.unidade }}</td>
+                        <td>{{ mov.data|date:"d/m/Y H:i" }}</td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="5" class="text-center">Nenhuma movimentação registrada.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="detail-card">
+        <h2>Lotes</h2>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Produto</th>
+                    <th>Tamanho</th>
+                    <th>Núm. Lote</th>
+                    <th>Quantidade</th>
+                    <th>Fornecedor</th>
+                    <th>Data Entrada</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for lote in loteproduto %}
+                    <tr>
+                        <td>{{ lote.variacao.produto.nome }}</td>
+                        <td>{{ lote.variacao.tamanho }}</td>
+                        <td>{{ lote.numero_lote }}</td>
+                        <td>{{ lote.quantidade }}</td>
+                        <td>{{ lote.fornecedor }}</td>
+                        <td>{{ lote.data_entrada|date:"d/m/Y H:i" }}</td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="5" class="text-center">Nenhuma movimentação registrada.</td>
+                    </tr>
                 {% endfor %}
             </tbody>
         </table>

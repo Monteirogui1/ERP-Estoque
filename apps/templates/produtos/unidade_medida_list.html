@@ -21,6 +21,7 @@
                 <td>{{ unidade.sigla }}</td>
                 <td>
                     <a href="{% url 'produtos:unidade_medida_edit' unidade.id %}" class="btn btn-sm btn-edit">Editar</a>
+                    <button class="btn btn-sm btn-delete" data-id="{{ unidade.id }}">Excluir</button>
                 </td>
             </tr>
             {% empty %}

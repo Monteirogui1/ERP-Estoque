@@ -31,6 +31,7 @@
                 </td>
                 <td>
                     <a href="{% url 'produtos:campo_dinamico_edit' campo.id %}" class="btn btn-sm btn-edit">Editar</a>
+                    <button class="btn btn-sm btn-delete" data-id="{{ campo.id }}">Excluir</button>
                 </td>
             </tr>
             {% empty %}

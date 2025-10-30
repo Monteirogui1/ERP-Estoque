@@ -23,6 +23,7 @@
                 <td>{{ tipo.descricao|default:"-" }}</td>
                 <td>
                     <a href="{% url 'movimentacao:tipo_movimentacao_edit' tipo.id %}" class="btn btn-sm btn-edit">Editar</a>
+                    <button class="btn btn-sm btn-delete" data-id="{{ tipo.id }}">Excluir</button>
                 </td>
             </tr>
             {% empty %}
