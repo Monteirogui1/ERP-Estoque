@@ -16,9 +16,10 @@ from ..categorias.models import Categoria
 from ..fornecedor.models import Fornecedor
 from ..marcas.models import Marca
 from ..movimentacao.models import Movimentacao, Lote
+from ..shared.mixins import ClienteQuerySetMixin, ClienteCreateMixin, ClienteObjectMixin
 
 
-class ProdutoListView(LoginRequiredMixin, ListView):
+class ProdutoListView(ClienteQuerySetMixin, LoginRequiredMixin, ListView):
     model = Produto
     template_name = 'produtos/produtos_list.html'
     context_object_name = 'produto'
@@ -66,7 +67,7 @@ class ProdutoListView(LoginRequiredMixin, ListView):
 
 
 
-class ProdutoCreateView(LoginRequiredMixin, CreateView):
+class ProdutoCreateView(ClienteCreateMixin, LoginRequiredMixin, CreateView):
     model = Produto
     template_name = 'produtos/produtos_edit.html'
     form_class = ProdutoForm
@@ -90,7 +91,7 @@ class ProdutoCreateView(LoginRequiredMixin, CreateView):
             return self.form_invalid(form)
 
 
-class ProdutoDetailView(LoginRequiredMixin, DetailView):
+class ProdutoDetailView(ClienteObjectMixin, LoginRequiredMixin, DetailView):
     model = Produto
     template_name = 'produtos/produtos_detail.html'
 
@@ -102,7 +103,7 @@ class ProdutoDetailView(LoginRequiredMixin, DetailView):
         return context
 
 
-class ProdutoUpdateView(LoginRequiredMixin, UpdateView):
+class ProdutoUpdateView(ClienteObjectMixin, LoginRequiredMixin, UpdateView):
     model = Produto
     template_name = 'produtos/produtos_edit.html'
     form_class = ProdutoForm
@@ -133,7 +134,7 @@ class ProdutoUpdateView(LoginRequiredMixin, UpdateView):
         return self.render_to_response(context)
 
 
-class ProdutoDeleteView(LoginRequiredMixin, DeleteView):
+class ProdutoDeleteView(ClienteObjectMixin, LoginRequiredMixin, DeleteView):
     model = Produto
     template_name = 'produtos/produtos_delete.html'
     success_url = reverse_lazy('produtos:produtos_list')
@@ -250,7 +251,7 @@ class VariacaoProdutoImportView(LoginRequiredMixin, View):
         return render(request, 'produtos/import_variacao.html', {'form': ImportForm()})
 
 
-class UnidadeMedidaListView(LoginRequiredMixin, ListView):
+class UnidadeMedidaListView(ClienteQuerySetMixin, LoginRequiredMixin, ListView):
     model = UnidadeMedida
     template_name = 'produtos/unidade_medida_list.html'
     context_object_name = 'unidades'
@@ -261,14 +262,14 @@ class UnidadeMedidaCreateView(CreateView):
     template_name = 'produtos/unidade_medida_edit.html'
     success_url = reverse_lazy('produtos:unidade_medida_list')
 
-class UnidadeMedidaUpdateView(LoginRequiredMixin, UpdateView):
+class UnidadeMedidaUpdateView(ClienteObjectMixin, LoginRequiredMixin, UpdateView):
     model = UnidadeMedida
     form_class = UnidadeMedidaForm
     template_name = 'produtos/unidade_medida_edit.html'
     success_url = reverse_lazy('produtos:unidade_medida_list')
 
 
-class CampoDinamicoListView(LoginRequiredMixin, ListView):
+class CampoDinamicoListView(ClienteQuerySetMixin, LoginRequiredMixin, ListView):
     model = CampoDinamico
     template_name = 'produtos/campos_dinamicos_list.html'
     context_object_name = 'campos'
@@ -279,7 +280,7 @@ class CampoDinamicoCreateView(LoginRequiredMixin, CreateView):
     template_name = 'produtos/campo_dinamico_edit.html'
     success_url = reverse_lazy('produtos:campos_dinamicos_list')
 
-class CampoDinamicoUpdateView(LoginRequiredMixin, UpdateView):
+class CampoDinamicoUpdateView(ClienteObjectMixin, LoginRequiredMixin, UpdateView):
     model = CampoDinamico
     form_class = CampoDinamicoForm
     template_name = 'produtos/campo_dinamico_edit.html'

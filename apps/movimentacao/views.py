@@ -12,14 +12,17 @@ from .models import Movimentacao, Lote, HistoricoEstoque, TipoMovimentacao
 from .forms import MovimentacaoForm, LoteForm, HistoricoEstoqueForm, TipoMovimentacaoForm
 from ..produtos.models import Produto, VariacaoProduto
 from ..fornecedor.models import Fornecedor
-from django.contrib.auth.models import User
 from django.shortcuts import render, redirect
 from django.contrib import messages
 import xml.etree.ElementTree as ET
 
+from ..shared.mixins import ClienteQuerySetMixin, ClienteCreateMixin, ClienteObjectMixin
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
 
 
-class LoteListView(LoginRequiredMixin, ListView):
+class LoteListView(ClienteQuerySetMixin, LoginRequiredMixin, ListView):
     model = Lote
     template_name = 'movimentacao/lote_list.html'
     context_object_name = 'lotes'
@@ -59,14 +62,14 @@ class LoteListView(LoginRequiredMixin, ListView):
         return context
 
 
-class LoteCreateView(LoginRequiredMixin, CreateView):
+class LoteCreateView(ClienteCreateMixin, LoginRequiredMixin, CreateView):
     model = Lote
     template_name = 'movimentacao/lote_create.html'
     form_class = LoteForm
     success_url = reverse_lazy('movimentacao:lote_list')
 
 
-class LoteDetailView(LoginRequiredMixin, DetailView):
+class LoteDetailView(ClienteObjectMixin, LoginRequiredMixin, DetailView):
     model = Lote
     template_name = 'movimentacao/lote_detail.html'
     context_object_name = 'lote'
@@ -77,20 +80,20 @@ class LoteDetailView(LoginRequiredMixin, DetailView):
         return context
 
 
-class LoteUpdateView(LoginRequiredMixin, UpdateView):
+class LoteUpdateView(ClienteObjectMixin, LoginRequiredMixin, UpdateView):
     model = Lote
     template_name = 'movimentacao/lote_create.html'
     form_class = LoteForm
     success_url = reverse_lazy('movimentacao:lote_list')
 
 
-class LoteDeleteView(LoginRequiredMixin, DeleteView):
+class LoteDeleteView(ClienteObjectMixin, LoginRequiredMixin, DeleteView):
     model = Lote
     template_name = 'movimentacao/lote_delete.html'
     success_url = reverse_lazy('movimentacao:lote_list')
 
 
-class MovimentacaoListView(LoginRequiredMixin, ListView):
+class MovimentacaoListView(ClienteQuerySetMixin, LoginRequiredMixin, ListView):
     model = Movimentacao
     template_name = 'movimentacao/movimentacao_list.html'
     context_object_name = 'movimentacao'
@@ -136,7 +139,7 @@ class MovimentacaoListView(LoginRequiredMixin, ListView):
         return context
 
 
-class MovimentacaoCreateView(LoginRequiredMixin, CreateView):
+class MovimentacaoCreateView(ClienteCreateMixin, LoginRequiredMixin, CreateView):
     model = Movimentacao
     template_name = 'movimentacao/movimentacao_create.html'
     form_class = MovimentacaoForm
@@ -147,18 +150,18 @@ class MovimentacaoCreateView(LoginRequiredMixin, CreateView):
         return super().form_valid(form)
 
 
-class MovimentacaoDetailView(LoginRequiredMixin, DetailView):
+class MovimentacaoDetailView(ClienteObjectMixin, LoginRequiredMixin, DetailView):
     model = Movimentacao
     template_name = 'movimentacao/detalhe_entrada.html'
 
 
-class MovimentacaoDeleteView(LoginRequiredMixin, DeleteView):
+class MovimentacaoDeleteView(ClienteObjectMixin, LoginRequiredMixin, DeleteView):
     model = Movimentacao
     template_name = 'movimentacao/movimentacao_delete.html'
     success_url = reverse_lazy('movimentacao:movimentacao_list')
 
 
-class HistoricoEstoqueListView(LoginRequiredMixin, ListView):
+class HistoricoEstoqueListView(ClienteQuerySetMixin, LoginRequiredMixin, ListView):
     model = HistoricoEstoque
     template_name = 'movimentacao/historico_estoque_list.html'
     context_object_name = 'historicos'
@@ -193,13 +196,13 @@ class HistoricoEstoqueListView(LoginRequiredMixin, ListView):
         return context
 
 
-class HistoricoEstoqueDetailView(LoginRequiredMixin, DetailView):
+class HistoricoEstoqueDetailView(ClienteObjectMixin, LoginRequiredMixin, DetailView):
     model = HistoricoEstoque
     template_name = 'movimentacao/historico_estoque_detail.html'
     context_object_name = 'historico'
 
 
-class AjusteEstoqueCreateView(LoginRequiredMixin, CreateView):
+class AjusteEstoqueCreateView(ClienteCreateMixin, LoginRequiredMixin, CreateView):
     model = Movimentacao
     template_name = 'movimentacao/ajuste_estoque_create.html'
     form_class = HistoricoEstoqueForm
@@ -291,18 +294,18 @@ class ImportarNFeView(LoginRequiredMixin, View):
         return redirect('movimentacao:lote_list')
 
 
-class TipoMovimentacaoListView(LoginRequiredMixin, ListView):
+class TipoMovimentacaoListView(ClienteQuerySetMixin, LoginRequiredMixin, ListView):
     model = TipoMovimentacao
     template_name = 'movimentacao/tipos_movimentacao_list.html'
     context_object_name = 'tipos'
 
-class TipoMovimentacaoCreateView(LoginRequiredMixin, CreateView):
+class TipoMovimentacaoCreateView(ClienteCreateMixin, LoginRequiredMixin, CreateView):
     model = TipoMovimentacao
     form_class = TipoMovimentacaoForm
     template_name = 'movimentacao/tipo_movimentacao_edit.html'
     success_url = reverse_lazy('movimentacao:tipo_movimentacao_list')
 
-class TipoMovimentacaoUpdateView(LoginRequiredMixin, UpdateView):
+class TipoMovimentacaoUpdateView(ClienteObjectMixin, LoginRequiredMixin, UpdateView):
     model = TipoMovimentacao
     form_class = TipoMovimentacaoForm
     template_name = 'movimentacao/tipo_movimentacao_edit.html'

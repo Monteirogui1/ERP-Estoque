@@ -6,11 +6,12 @@ from django.views.generic import ListView, CreateView, DetailView, UpdateView, D
 from .forms import FornecedorForm
 from .models import Fornecedor
 from ..produtos.models import Produto
+from ..shared.mixins import ClienteQuerySetMixin, ClienteCreateMixin, ClienteObjectMixin
 
 app_name = 'fornecedores'
 
 
-class FornecedorListView(LoginRequiredMixin, ListView):
+class FornecedorListView(ClienteQuerySetMixin, LoginRequiredMixin, ListView):
     model = Fornecedor
     template_name = 'fornecedor/fornecedores_list.html'
     context_object_name = 'fornecedores'
@@ -39,14 +40,14 @@ class FornecedorListView(LoginRequiredMixin, ListView):
         return queryset
 
 
-class FornecedorCreateView(LoginRequiredMixin, CreateView):
+class FornecedorCreateView(ClienteCreateMixin, LoginRequiredMixin, CreateView):
     model = Fornecedor
     template_name = 'fornecedor/fornecedores_edit.html'
     form_class = FornecedorForm
     success_url = reverse_lazy('fornecedores:fornecedores_list')
 
 
-class FornecedorDetailView(LoginRequiredMixin, DetailView):
+class FornecedorDetailView(ClienteObjectMixin, LoginRequiredMixin, DetailView):
     model = Fornecedor
     template_name = 'fornecedor/fornecedores_detail.html'
 
@@ -57,14 +58,14 @@ class FornecedorDetailView(LoginRequiredMixin, DetailView):
         return context
 
 
-class FornecedorUpdateView(LoginRequiredMixin, UpdateView):
+class FornecedorUpdateView(ClienteObjectMixin, LoginRequiredMixin, UpdateView):
     model = Fornecedor
     template_name = 'fornecedor/fornecedores_edit.html'
     form_class = FornecedorForm
     success_url = reverse_lazy('fornecedores:fornecedores_list')
 
 
-class FornecedorDeleteView(LoginRequiredMixin, DeleteView):
+class FornecedorDeleteView(ClienteObjectMixin, LoginRequiredMixin, DeleteView):
     model = Fornecedor
     template_name = 'fornecedor/deleta_fornecedor.html'
     success_url = reverse_lazy('fornecedores:fornecedores_list')

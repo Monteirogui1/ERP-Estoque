@@ -1,9 +1,10 @@
 from django.db import models
 
 from apps.produtos.models import Produto
+from apps.shared.models import Cliente, ClienteBaseModel
 
 
-class Notificacao(models.Model):
+class Notificacao(ClienteBaseModel, models.Model):
     produto = models.ForeignKey(Produto, on_delete=models.PROTECT, related_name='notificacoes')
     mensagem = models.TextField()
     lida = models.BooleanField(default=False)

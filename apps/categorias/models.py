@@ -1,7 +1,8 @@
 from django.db import models
+from apps.shared.models import Cliente, ClienteBaseModel
 
 
-class Categoria(models.Model):
+class Categoria(ClienteBaseModel, models.Model):
     nome = models.CharField(max_length=500)
     descricao = models.TextField(null=True, blank=True)
     status = models.BooleanField(default=True)

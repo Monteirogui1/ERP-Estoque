@@ -4,6 +4,8 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
 from .models import Notificacao
+from ..shared.mixins import ClienteObjectMixin
+
 
 # class BaseView(TemplateView):
 #     template_name = 'layouts/base.html'
@@ -15,7 +17,7 @@ from .models import Notificacao
 #         return context
 #
 
-class MarcarNotificacaoLidaView(LoginRequiredMixin, RedirectView):
+class MarcarNotificacaoLidaView(ClienteObjectMixin, LoginRequiredMixin, RedirectView):
 
     def get(self, request, *args, **kwargs):
         notificacao_id = self.kwargs.get('notificacao_id')

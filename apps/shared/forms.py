@@ -18,12 +18,12 @@ class ImportForm(forms.Form):
     )
 
 class ClienteWizardForm(forms.ModelForm):
-    class Meta:
-        model = Cliente
-        fields = ['nome', 'dominio', 'banco']
-
     senha_admin = forms.CharField(
         label='Senha do admin', widget=forms.PasswordInput, required=False,
         help_text='(Opcional) Cria usuário admin inicial'
     )
     email_admin = forms.EmailField(label='E-mail do admin', required=False)
+
+    class Meta:
+        model = Cliente
+        fields = ['nome', 'email', 'cnpj']

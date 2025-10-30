@@ -9,9 +9,10 @@ from .metrics import metricas_vendas, metricas_estoque
 from apps.produtos.models import Produto, VariacaoProduto
 from apps.movimentacao.models import Lote, HistoricoEstoque
 from apps.notificacao.models import Notificacao
+from ..shared.mixins import ClienteObjectMixin
 
 
-class IndexTemplateView(LoginRequiredMixin, TemplateView):
+class IndexTemplateView(ClienteObjectMixin, LoginRequiredMixin, TemplateView):
     template_name = "home/home.html"
 
     def get_context_data(self, **kwargs):
@@ -45,7 +46,7 @@ class IndexTemplateView(LoginRequiredMixin, TemplateView):
         return context
 
 
-class SearchView(LoginRequiredMixin, View):
+class SearchView(ClienteObjectMixin, LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         query = request.GET.get('q', '')
         if not query:

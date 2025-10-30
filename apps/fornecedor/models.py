@@ -1,7 +1,9 @@
 from django.db import models
 
+from apps.shared.models import Cliente, ClienteBaseModel
 
-class Fornecedor(models.Model):
+
+class Fornecedor(ClienteBaseModel, models.Model):
     nome = models.CharField(max_length=500)
     contato = models.CharField(max_length=20, blank=True, null=True)
     email = models.EmailField(blank=True, null=True)

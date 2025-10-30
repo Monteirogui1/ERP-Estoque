@@ -1,7 +1,9 @@
 from django.db import models
 
+from apps.shared.models import Cliente, ClienteBaseModel
 
-class Marca(models.Model):
+
+class Marca(ClienteBaseModel, models.Model):
     nome = models.CharField(max_length=500)
     descricao = models.TextField(null=True, blank=True)
     status = models.BooleanField(default=True)

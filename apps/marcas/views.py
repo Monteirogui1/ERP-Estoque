@@ -5,9 +5,10 @@ from django.views.generic import ListView, CreateView, DetailView, UpdateView, D
 
 from .forms import MarcaForm
 from .models import Marca
+from ..shared.mixins import ClienteQuerySetMixin, ClienteCreateMixin, ClienteObjectMixin
 
 
-class MarcaListView(LoginRequiredMixin, ListView):
+class MarcaListView(ClienteQuerySetMixin, LoginRequiredMixin, ListView):
     model = Marca
     template_name = 'marcas/marca_list.html'
     context_object_name = 'marca'
@@ -30,26 +31,26 @@ class MarcaListView(LoginRequiredMixin, ListView):
         return queryset
 
 
-class MarcaCreateView(LoginRequiredMixin, CreateView):
+class MarcaCreateView(ClienteCreateMixin, LoginRequiredMixin, CreateView):
     model = Marca
     template_name = 'marcas/marca_edit.html'
     form_class = MarcaForm
     success_url = reverse_lazy('marcas:marca_list')
 
 
-class MarcaDetailView(LoginRequiredMixin, DetailView):
+class MarcaDetailView(ClienteObjectMixin, LoginRequiredMixin, DetailView):
     model = Marca
     template_name = 'marcas/detalhe_marca.html'
 
 
-class MarcaUpdateView(LoginRequiredMixin, UpdateView):
+class MarcaUpdateView(ClienteObjectMixin, LoginRequiredMixin, UpdateView):
     model = Marca
     template_name = 'marcas/marca_edit.html'
     form_class = MarcaForm
     success_url = reverse_lazy('marcas:marca_list')
 
 
-class MarcaDeleteView(LoginRequiredMixin, DeleteView):
+class MarcaDeleteView(ClienteObjectMixin, LoginRequiredMixin, DeleteView):
     model = Marca
     template_name = 'marcas/deleta_marca.html'
     success_url = reverse_lazy('marcas:marca_list')

@@ -5,5 +5,4 @@ from django.urls import reverse
 
 @admin.register(Cliente)
 class ClienteAdmin(admin.ModelAdmin):
-    list_display = ('nome', 'dominio', 'banco', 'criado_em')
-    change_list_template = 'shared/cliente_changelist.html'
+    list_display = ('nome', 'cnpj', 'email', 'data_criacao')
