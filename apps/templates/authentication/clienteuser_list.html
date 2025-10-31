@@ -52,8 +52,7 @@
                         <td>{{ usuario.email|default:"-" }}</td>
                         <td>{{ usuario.is_staff|yesno:"Sim,Não" }}</td>
                         <td>
-                            <a href="{% url 'authentication:clienteuser_update' usuario.pk %}" class="btn btn-sm btn-edit">View</a>
-                            <a href="{% url 'authentication:clienteuser_delete' usuario.pk %}" class="btn btn-sm btn-edit">Editar</a>
+                            <a href="{% url 'authentication:clienteuser_update' usuario.pk %}" class="btn btn-sm btn-edit">Editar</a>
                             <button class="btn btn-sm btn-delete" data-id="{{ usuario.id }}">Excluir</button>
                         </td>
                     </tr>

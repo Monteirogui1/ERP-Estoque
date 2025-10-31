@@ -27,7 +27,7 @@ class ClienteUserListView(LoginRequiredMixin, ListView):
         # Começa filtrando só usuários do cliente do usuário logado
         queryset = User.objects.filter(cliente=self.request.user.cliente)
 
-        nome = self.request.GET.get('nome')  # Corrigido!
+        nome = self.request.GET.get('nome')
         email = self.request.GET.get('email')
         admin = self.request.GET.get('is_staff')
 
